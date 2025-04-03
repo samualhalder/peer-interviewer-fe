@@ -2,10 +2,11 @@
 import React from "react";
 import { Montserrat } from "next/font/google";
 import { IoIosNotificationsOutline, IoIosSearch } from "react-icons/io";
-import ls from "../../lib/localStorage";
 import Button from "../ui/Button";
 
 import Link from "next/link";
+import { toast } from "@/hooks/use-toast";
+import TokenUtils from "@/utils/token.utils";
 
 const montserratFont = Montserrat({
   subsets: ["latin"],
@@ -13,10 +14,10 @@ const montserratFont = Montserrat({
 });
 
 export default function Navbar() {
-  const token = ls.get("token") as string;
+  const token = TokenUtils.getToken();
 
   return (
-    <div className="w-[95%] h-[60px] fixed top-4 bg-primary text-white self-center rounded-md flex items-center px-3 justify-between">
+    <div className="w-[95%] h-[60px] fixed top-4 bg-myprimary text-white self-center rounded-md flex items-center px-3 justify-between">
       <Title />
       <SearchBar />
       <div className="flex gap-4">
@@ -26,7 +27,17 @@ export default function Navbar() {
         ) : (
           <Link href={"/signup"}>
             {" "}
-            <Button variant="outline">Sign Up</Button>{" "}
+            <Button
+              variant="outline"
+              onClick={() => {
+                toast({
+                  variant: "success",
+                  description: "Friday, February 10, 2023 at 5:57 PM",
+                });
+              }}
+            >
+              Sign Up
+            </Button>{" "}
           </Link>
         )}
       </div>

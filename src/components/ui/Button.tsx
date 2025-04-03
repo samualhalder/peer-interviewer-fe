@@ -1,15 +1,15 @@
 import { cva } from "class-variance-authority";
 import React from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../utils/cn";
 
 const buttonVariant = cva(
   "px-4 py-2 rounded-md hover:opacity-50 font-semibold self-center",
   {
     variants: {
       variant: {
-        primary: "bg-primary text-white",
-        secondary: "bg-secondary text-white",
-        outline: " border-2 border-primary bg-white text-primary",
+        primary: "bg-myprimary text-white",
+        secondary: "bg-mysecondary text-white",
+        outline: " border-2 border-myprimary bg-white text-myprimary",
       },
       size: {
         sm: "w-15",
