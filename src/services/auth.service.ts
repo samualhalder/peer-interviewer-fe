@@ -47,6 +47,29 @@ const signInService = async (data: any) => {
     return { success: false };
   }
 };
+const oAuhtService = async (data: any) => {
+  try {
+    const result = await httpService.post<ResponseReturnType>(
+      "/auth/oauth",
+      data
+    );
+    if (!result?.data?.error) {
+      toast({
+        variant: "success",
+        description: result?.data?.message,
+      });
+    }
+    const token = result.data.result as string;
+    TokenUtils?.setToken(token);
+    return { success: true };
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      description: error?.response?.data?.message,
+    });
+    return { success: false };
+  }
+};
 const signOutService = () => {
   TokenUtils?.removeToken();
   toast({
@@ -66,4 +89,10 @@ const checkValidToken = async (token: string) => {
     return false;
   }
 };
-export { signUpService, signInService, signOutService, checkValidToken };
+export {
+  signUpService,
+  signInService,
+  signOutService,
+  checkValidToken,
+  oAuhtService,
+};

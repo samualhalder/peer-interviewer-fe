@@ -50,7 +50,9 @@ export default function Navbar() {
 
 function Title() {
   return (
-    <div className={` tracking-widest text-2xl ${montserratFont.className}`}>
+    <div
+      className={` tracking-widest text-2xl ${montserratFont.className} select-none`}
+    >
       peerInterviewer
     </div>
   );
@@ -60,7 +62,7 @@ function Avatar() {
   const [isVissible, setIsVissible] = useState<boolean>(false);
   return (
     <div
-      className={` h-[40px] w-[40px]  rounded-full overflow-hidden flex items-center justify-center ${montserratFont.className} font-bold border-[1.5px] border-white cursor-pointer`}
+      className={` h-[40px] w-[40px]  rounded-full overflow-hidden flex items-center justify-center ${montserratFont.className} font-bold border-[1.5px] border-white cursor-pointer hover:bg-mysecondary select-none`}
       onClick={() => setIsVissible(!isVissible)}
     >
       SH
@@ -72,7 +74,7 @@ function Avatar() {
 function NotificationIcon() {
   return (
     <div
-      className={`w-[40px] h-[40px] flex justify-center items-center hover:bg-blue-500 rounded-full cursor-pointer`}
+      className={`select-none w-[40px] h-[40px] flex justify-center items-center hover:bg-blue-500 rounded-full cursor-pointer`}
     >
       <IoIosNotificationsOutline size={30} />
     </div>
