@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import MainLayout from "@/components/layouts/MainLayout";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/layouts/Navbar";
+import AuthGuard from "./AuthGaurd";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,19 +36,21 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col`}
       >
-        {noNavbarPaths.includes(pathname) ? (
-          <div className="h-screen flex justify-center items-center">
-            {children}
-            <Toaster />
-          </div>
-        ) : (
-          <>
-            {" "}
-            <Navbar />
-            <MainLayout>{children}</MainLayout>
-            <Toaster />
-          </>
-        )}
+        <AuthGuard>
+          {noNavbarPaths.includes(pathname) ? (
+            <div className="h-screen flex justify-center items-center">
+              {children}
+              <Toaster />
+            </div>
+          ) : (
+            <>
+              {" "}
+              <Navbar />
+              <MainLayout>{children}</MainLayout>
+              <Toaster />
+            </>
+          )}
+        </AuthGuard>
       </body>
     </html>
   );

@@ -5,6 +5,7 @@ import Button from "@/components/ui/Button";
 import { signupValidationSchema } from "@/validations/auth.validation";
 import { signUpService } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -84,6 +85,12 @@ export default function SignUpForm() {
           </Form>
         )}
       </Formik>
+      <p className="mt-2 text-white">
+        already have an account?{" "}
+        <Link href={"/signin"} className="text-blue-950">
+          sign in
+        </Link>
+      </p>
     </div>
   );
 }

@@ -13,5 +13,4 @@ class TokenUtilsClass {
     window.localStorage.removeItem(this.key);
   }
 }
-const TokenUtils = new TokenUtilsClass();
-export default TokenUtils;
+export default typeof window !== "undefined" ? new TokenUtilsClass() : null;

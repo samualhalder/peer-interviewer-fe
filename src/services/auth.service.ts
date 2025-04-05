@@ -1,10 +1,14 @@
 import { toast } from "@/hooks/use-toast";
 import httpService from "./http.service";
 import TokenUtils from "@/utils/token.utils";
+import { ResponseReturnType } from "@/types/service.types";
 
-const signUpService = async (data) => {
+const signUpService = async (data: any) => {
   try {
-    const result = await httpService.post("/auth/signup", data);
+    const result = await httpService.post<ResponseReturnType>(
+      "/auth/signup",
+      data
+    );
     if (!result?.data?.error) {
       toast({
         variant: "success",
@@ -12,7 +16,7 @@ const signUpService = async (data) => {
       });
     }
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
     toast({
       variant: "destructive",
       description: error?.response?.data?.message,
@@ -20,18 +24,22 @@ const signUpService = async (data) => {
     return { success: false };
   }
 };
-const signInService = async (data) => {
+const signInService = async (data: any) => {
   try {
-    const result = await httpService.post("/auth/signin", data);
+    const result = await httpService.post<ResponseReturnType>(
+      "/auth/signin",
+      data
+    );
     if (!result?.data?.error) {
       toast({
         variant: "success",
         description: result?.data?.message,
       });
     }
-    TokenUtils.setToken(result.data.result);
+    const token = result.data.result as string;
+    TokenUtils?.setToken(token);
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
     toast({
       variant: "destructive",
       description: error?.response?.data?.message,
@@ -39,5 +47,23 @@ const signInService = async (data) => {
     return { success: false };
   }
 };
+const signOutService = () => {
+  TokenUtils?.removeToken();
+  toast({
+    variant: "success",
+    description: "Sign out successgull",
+  });
+};
+const checkValidToken = async (token: string) => {
+  try {
+    const result = await httpService.post<ResponseReturnType>(
+      "/auth/valid-jwt",
+      { token }
+    );
 
-export { signUpService, signInService };
+    return !result?.data?.result;
+  } catch (err) {
+    return false;
+  }
+};
+export { signUpService, signInService, signOutService, checkValidToken };

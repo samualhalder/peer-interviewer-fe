@@ -3,10 +3,11 @@ import TokenUtils from "../utils/token.utils";
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL as string;
 axios.defaults.baseURL = baseURL;
-const token = TokenUtils.getToken() as string;
-const setJWT = (token: string) => {
-  axios.defaults.headers.common["Authorization"] = token;
+const token = TokenUtils?.getToken() as string;
+const setJWT = (tk: string) => {
+  axios.defaults.headers.common["Authorization"] = `Bearer ${tk}`;
 };
+
 setJWT(token);
 
 export default {
