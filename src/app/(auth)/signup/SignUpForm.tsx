@@ -6,6 +6,7 @@ import { signupValidationSchema } from "@/validations/auth.validation";
 import { signUpService } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import InputField from "@/components/ui/InputField";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -32,48 +33,31 @@ export default function SignUpForm() {
         {({ errors, touched, isSubmitting }) => (
           <Form>
             <div className="flex flex-col gap-2">
-              <div className="flex flex-col gap-3">
-                <label htmlFor="name" className="font-medium text-white ">
-                  Name*
-                </label>
-                <Field
-                  name="name"
-                  as="input"
-                  className="custom-input flex-grow "
-                />
-
-                {errors.name && touched.name && (
-                  <div className=" text-sm text-red-400">{errors.name}</div>
-                )}
-              </div>
-              <div className="flex flex-col gap-3">
-                <label htmlFor="email" className="font-medium text-white ">
-                  Email*
-                </label>
-                <Field
-                  name="email"
-                  as="input"
-                  className="custom-input flex-grow "
-                />
-
-                {errors.email && touched.email && (
-                  <div className=" text-sm text-red-400">{errors.email}</div>
-                )}
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="password" className="font-medium text-white">
-                  Password*
-                </label>
-                <Field
-                  name="password"
-                  as="input"
-                  className="custom-input flex-grow "
-                />
-
-                {errors.password && touched.password && (
-                  <div className=" text-sm text-red-400">{errors.password}</div>
-                )}
-              </div>
+              <InputField
+                name="name"
+                errors={errors}
+                touched={touched}
+                as="input"
+                label="Full Name*"
+                placeholder="John Dow"
+              />
+              <InputField
+                name="email"
+                errors={errors}
+                touched={touched}
+                as="input"
+                label="Email*"
+                placeholder="example@gmail.com"
+              />
+              <InputField
+                name="password"
+                errors={errors}
+                touched={touched}
+                as="input"
+                label="Password*"
+                type="password"
+                placeholder="*******"
+              />
               <Button
                 className="w-full mt-5 border-white border-[1px]"
                 variant="secondary"

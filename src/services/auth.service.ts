@@ -85,8 +85,19 @@ const checkValidToken = async (token: string) => {
     );
 
     return !result?.data?.result;
-  } catch (err) {
+  } catch (err: any) {
     return false;
+  }
+};
+const fetchUser = async () => {
+  try {
+    const result = await httpService.get<ResponseReturnType>(
+      "/auth/get-user-by-token"
+    );
+
+    return result?.data?.result;
+  } catch (err: any) {
+    return null;
   }
 };
 export {
@@ -95,4 +106,5 @@ export {
   signOutService,
   checkValidToken,
   oAuhtService,
+  fetchUser,
 };

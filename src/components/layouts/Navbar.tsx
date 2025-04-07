@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Montserrat } from "next/font/google";
 import { IoIosNotificationsOutline, IoIosSearch } from "react-icons/io";
 import Button from "../ui/Button";
@@ -8,6 +8,9 @@ import Link from "next/link";
 import { toast } from "@/hooks/use-toast";
 import TokenUtils from "@/utils/token.utils";
 import DropDown from "../common/DropDown";
+import { UserType } from "@/types/entity.types";
+import useFetchUser from "@/hooks/useFetchUser";
+import Image from "next/image";
 
 const montserratFont = Montserrat({
   subsets: ["latin"],
@@ -15,7 +18,7 @@ const montserratFont = Montserrat({
 });
 
 export default function Navbar() {
-  const token = TokenUtils.getToken();
+  const token = TokenUtils?.getToken();
 
   return (
     <>
@@ -60,13 +63,22 @@ function Title() {
 
 function Avatar() {
   const [isVissible, setIsVissible] = useState<boolean>(false);
+  const { user } = useFetchUser();
+  console.log(user);
+
   return (
     <div
       className={` h-[40px] w-[40px]  rounded-full overflow-hidden flex items-center justify-center ${montserratFont.className} font-bold border-[1.5px] border-white cursor-pointer hover:bg-mysecondary select-none`}
       onClick={() => setIsVissible(!isVissible)}
     >
-      SH
-      <DropDown isVissible={isVissible} />
+      {user && user?.image && (
+        <Image src={user?.image} alt="image" width={40} height={40} />
+      )}
+      {user && !user?.image && (
+        <span className="font-bold">{user?.name[0]}</span>
+      )}
+
+      <DropDown isVissible={isVissible} setIsVissible={setIsVissible} />
     </div>
   );
 }

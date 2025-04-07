@@ -1,11 +1,12 @@
 "use client";
 import React from "react";
-import { Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import Button from "@/components/ui/Button";
 import { signinValidationSchema } from "@/validations/auth.validation";
-import { signInService, signUpService } from "@/services/auth.service";
+import { signInService } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import InputField from "@/components/ui/InputField";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -31,34 +32,21 @@ export default function SignInForm() {
         {({ errors, touched, isSubmitting }) => (
           <Form>
             <div className="flex flex-col gap-2">
-              <div className="flex flex-col gap-3">
-                <label htmlFor="email" className="font-medium text-white ">
-                  Email*
-                </label>
-                <Field
-                  name="email"
-                  as="input"
-                  className="custom-input flex-grow "
-                />
-
-                {errors.email && touched.email && (
-                  <div className=" text-sm text-red-400">{errors.email}</div>
-                )}
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="password" className="font-medium text-white">
-                  Password*
-                </label>
-                <Field
-                  name="password"
-                  as="input"
-                  className="custom-input flex-grow "
-                />
-
-                {errors.password && touched.password && (
-                  <div className=" text-sm text-red-400">{errors.password}</div>
-                )}
-              </div>
+              <InputField
+                name="email"
+                errors={errors}
+                touched={touched}
+                as="input"
+                label="Email*"
+              />
+              <InputField
+                name="password"
+                errors={errors}
+                touched={touched}
+                as="input"
+                label="Password*"
+                type="password"
+              />
               <Button
                 className="w-full mt-5 border-white border-[1px]"
                 variant="secondary"
