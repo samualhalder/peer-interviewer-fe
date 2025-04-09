@@ -11,6 +11,7 @@ import DropDown from "../common/DropDown";
 import { UserType } from "@/types/entity.types";
 import useFetchUser from "@/hooks/useFetchUser";
 import Image from "next/image";
+import ImageCircle from "../common/ImageCircle";
 
 const montserratFont = Montserrat({
   subsets: ["latin"],
@@ -68,15 +69,10 @@ function Avatar() {
 
   return (
     <div
-      className={` h-[40px] w-[40px]  rounded-full overflow-hidden flex items-center justify-center ${montserratFont.className} font-bold border-[1.5px] border-white cursor-pointer hover:bg-mysecondary select-none`}
+      className={` h-[40px] w-[40px]  cursor-pointer select-none`}
       onClick={() => setIsVissible(!isVissible)}
     >
-      {user && user?.image && (
-        <Image src={user?.image} alt="image" width={40} height={40} />
-      )}
-      {user && !user?.image && (
-        <span className="font-bold">{user?.name[0]}</span>
-      )}
+      <ImageCircle width={40} height={40} link={user?.image} />
 
       <DropDown isVissible={isVissible} setIsVissible={setIsVissible} />
     </div>

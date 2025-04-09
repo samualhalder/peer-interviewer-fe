@@ -5,9 +5,5 @@ export default function ProfilePageLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="p-2 flex flex-col md:flex-row gap-2 h-screen">
-      {children}
-    </div>
-  );
+  return <div className="p-2 grid md:grid-cols-3 gap-2">{children}</div>;
 }

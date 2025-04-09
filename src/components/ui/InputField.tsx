@@ -7,6 +7,7 @@ type propType = ComponentProps<"input"> & {
   as?: "input" | "select";
   errors: any;
   touched: any;
+  labelText?: string;
 };
 export default function InputField({
   name,
@@ -14,13 +15,14 @@ export default function InputField({
   as = "input",
   errors,
   touched,
+  labelText = "white",
   ...props
 }: propType) {
   return (
     <>
       <div className="flex flex-col gap-3">
         {label && (
-          <label htmlFor={name} className="font-medium text-white ">
+          <label htmlFor={name} className={`font-medium text-${labelText} `}>
             {label}
           </label>
         )}
