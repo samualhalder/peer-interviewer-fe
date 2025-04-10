@@ -8,6 +8,7 @@ export interface UserType {
   image?: string;
   organization?: string;
   location?: string;
+  skills?: string;
   isAccountDeleted?: boolean;
   createdAt?: Date;
 }
