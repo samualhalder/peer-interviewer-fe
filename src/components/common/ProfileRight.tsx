@@ -2,6 +2,9 @@ import React from "react";
 import Flex from "../ui/Flex";
 import ProfileCard from "./ProfileCard";
 import TechnicalSkills from "../TechnicalSkills";
+import Break from "./Break";
+import ResetPassword from "../ResetPassword";
+import SignInForm from "@/app/(auth)/signin/SignInForm";
 
 export default function ProfileRight() {
   return (
@@ -31,6 +34,8 @@ export default function ProfileRight() {
       </Flex>
       <Flex items="start">
         <TechnicalSkills />
+        <Break color="blue" />
+        <ResetPassword />
       </Flex>
     </Flex>
   );

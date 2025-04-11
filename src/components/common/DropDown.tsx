@@ -25,27 +25,29 @@ function DropDown({
   useOutSideClick(ref, () => setIsVissible(false), isVissible);
   if (!isVissible) return null;
   return (
-    <DropDownLayout ref={ref}>
-      <DropDownItem
-        icon={<AiOutlineUser />}
-        title="Profile"
-        action={() => router.push("/profile")}
-      />
-      <DropDownItem icon={<AiOutlineSetting />} title="Settings" />
-      <DropDownItem
-        icon={<AiOutlineCustomerService />}
-        title="Feedback & Support"
-      />
-      <Break size={1} />
-      <DropDownItem
-        icon={<AiOutlineLogin />}
-        title="Sign Out"
-        action={() => {
-          signOutService();
-          router.push("/signin");
-        }}
-      />
-    </DropDownLayout>
+    <div className="z-50">
+      <DropDownLayout ref={ref}>
+        <DropDownItem
+          icon={<AiOutlineUser />}
+          title="Profile"
+          action={() => router.push("/profile")}
+        />
+        <DropDownItem icon={<AiOutlineSetting />} title="Settings" />
+        <DropDownItem
+          icon={<AiOutlineCustomerService />}
+          title="Feedback & Support"
+        />
+        <Break size={1} />
+        <DropDownItem
+          icon={<AiOutlineLogin />}
+          title="Sign Out"
+          action={() => {
+            signOutService();
+            router.push("/signin");
+          }}
+        />
+      </DropDownLayout>
+    </div>
   );
 }
 // Adding a static property

@@ -7,19 +7,15 @@ import { RxCross1 } from "react-icons/rx";
 import Button from "./ui/Button";
 import { leftProfileFormService } from "@/services/profile.service";
 import useFetchUser from "@/hooks/useFetchUser";
+import HeadingTitle from "./common/HeadingTitle";
 
 export default function TechnicalSkills() {
   return (
     <Flex items="start">
-      <Flex
-        variant="row"
-        items="center"
-        justify="start"
-        className="text-myprimary"
-      >
-        <IoAddCircleSharp size={30} />
-        <h1 className="text-xl font-semibold">Add Technical Skills</h1>
-      </Flex>
+      <HeadingTitle
+        title="Add Technical skills"
+        icon={<IoAddCircleSharp size={40} />}
+      />
       <Input />
     </Flex>
   );
@@ -82,15 +78,15 @@ const Input = () => {
   };
 
   return (
-    <div className="w-full">
-      <div className="flex relative border-2 border-myprimary w-full rounded-sm p-2 z-20">
-        <div className="flex  flex-wrap items-center justify-start gap-2 w-full z-0">
+    <div className="w-full z-0">
+      <div className="flex relative border-2 border-myprimary w-full rounded-sm p-2">
+        <div className="flex  flex-wrap items-center justify-start gap-2 w-full ">
           {/* Serch Pill  */}
           {selectedItems?.map((it, ind) => (
             <Pill value={it} key={ind} onClick={() => handleRemove(it)}></Pill>
           ))}
           {/* Input Field */}
-          <div className="relative z-0">
+          <div className="relative">
             <input
               ref={inputFef}
               type="text"
@@ -102,7 +98,7 @@ const Input = () => {
             />
             <ul
               hidden={!showSuggestions}
-              className="z-30 absolute max-h-[300px] w-[400px] overflow-y-auto  top-10 left-2 rounded-md shadow-lg"
+              className="  absolute max-h-[300px] w-[400px] overflow-y-auto  top-10 left-2 rounded-md shadow-lg"
             >
               {suggetions.length > 0 ? (
                 suggetions.map((st, ind) => (
@@ -139,7 +135,7 @@ const Input = () => {
 
 const Pill = ({ value, onClick }: { value: string; onClick: () => void }) => {
   return (
-    <div className="flex gap-2 items-center justify-between bg-mysecondary px-2 py-1 text-white rounded-sm shadow-md select-none z-10">
+    <div className="flex gap-2 items-center justify-between bg-mysecondary px-2 py-1 text-white rounded-sm shadow-md select-none ">
       {value}
       <RxCross1 onClick={onClick} />
     </div>

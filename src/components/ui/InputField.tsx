@@ -15,7 +15,7 @@ export default function InputField({
   as = "input",
   errors,
   touched,
-  labelText = "white",
+  labelText = "myprimary",
   ...props
 }: propType) {
   return (
@@ -26,12 +26,7 @@ export default function InputField({
             {label}
           </label>
         )}
-        <Field
-          name={name}
-          as={as}
-          className="custom-input flex-grow "
-          {...props}
-        />
+        <Field name={name} as={as} className="custom-input " {...props} />
 
         {errors[name] && touched[name] && (
           <div className=" text-sm text-red-400">{errors[name]}</div>

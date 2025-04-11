@@ -14,7 +14,7 @@ export default function DropDownItem({
     <>
       {" "}
       <div
-        className="flex gap-4 items-center hover:bg-mysecondary p-2 rounded-md"
+        className="flex gap-4 items-center hover:bg-mysecondary p-2 rounded-md "
         onClick={action}
       >
         {icon}

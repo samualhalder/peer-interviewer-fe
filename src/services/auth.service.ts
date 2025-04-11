@@ -100,6 +100,29 @@ const fetchUser = async () => {
     return null;
   }
 };
+const resetpasswordService = async (data: any) => {
+  try {
+    const result = await httpService.put<ResponseReturnType>(
+      "/auth/reset-password",
+      data
+    );
+    if (!result?.data?.error) {
+      toast({
+        variant: "success",
+        description: result?.data?.message,
+      });
+    }
+    const token = result.data.result as string;
+    TokenUtils?.setToken(token);
+    return true;
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      description: error?.response?.data?.message,
+    });
+    return false;
+  }
+};
 export {
   signUpService,
   signInService,
@@ -107,4 +130,5 @@ export {
   checkValidToken,
   oAuhtService,
   fetchUser,
+  resetpasswordService,
 };
