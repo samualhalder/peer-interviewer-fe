@@ -4,13 +4,14 @@ import ProfileCard from "./ProfileCard";
 import TechnicalSkills from "../TechnicalSkills";
 import Break from "./Break";
 import ResetPassword from "../ResetPassword";
-import SignInForm from "@/app/(auth)/signin/SignInForm";
+
+import AddDescription from "../AddDescription";
 
 export default function ProfileRight() {
   return (
     <Flex
       gap="3xl"
-      className="md:col-span-2 p-2 rounded-md h-screen"
+      className="md:col-span-2 p-2 rounded-md h-screen "
       items="center"
       justify="start"
     >
@@ -32,8 +33,9 @@ export default function ProfileRight() {
           data={{ name: "Canceled Interviews", value: 2 }}
         />
       </Flex>
-      <Flex items="start">
+      <Flex items="start" className="">
         <TechnicalSkills />
+
         <Break color="blue" />
         <ResetPassword />
       </Flex>

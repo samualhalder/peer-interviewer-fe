@@ -3,7 +3,7 @@ import Flex from "../ui/Flex";
 
 type propType = React.HTMLAttributes<HTMLDivElement> & {
   title: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
 };
 export default function HeadingTitle({ title, icon, ...props }: propType) {
   return (
@@ -14,7 +14,7 @@ export default function HeadingTitle({ title, icon, ...props }: propType) {
         justify="start"
         className="text-myprimary"
       >
-        {icon}
+        {icon && icon}
         <h1 className="text-xl font-semibold">{title}</h1>
       </Flex>
     </div>

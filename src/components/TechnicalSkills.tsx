@@ -78,8 +78,8 @@ const Input = () => {
   };
 
   return (
-    <div className="w-full z-0">
-      <div className="flex relative border-2 border-myprimary w-full rounded-sm p-2">
+    <div className="w-full ">
+      <div className="flex relative border-2 border-myprimary w-full rounded-sm p-2 ">
         <div className="flex  flex-wrap items-center justify-start gap-2 w-full ">
           {/* Serch Pill  */}
           {selectedItems?.map((it, ind) => (

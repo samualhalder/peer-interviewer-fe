@@ -54,11 +54,12 @@ export default function Navbar() {
 
 function Title() {
   return (
-    <div
+    <Link
+      href={"/"}
       className={` tracking-widest text-2xl ${montserratFont.className} select-none`}
     >
       peerInterviewer
-    </div>
+    </Link>
   );
 }
 

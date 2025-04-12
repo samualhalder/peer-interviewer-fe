@@ -63,6 +63,11 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      // tailwind.config.js
+
+      zIndex: {
+        max: "9999", // Custom z-index value
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

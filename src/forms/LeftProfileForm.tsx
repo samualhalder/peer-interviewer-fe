@@ -16,8 +16,9 @@ export default function LeftProfileForm() {
       initialValues={{
         name: user?.name,
         email: user?.email,
-        location: user?.location,
-        image: user?.image,
+        image: user?.image || "",
+        location: user?.location || "",
+        organization: user?.organization || "",
       }}
       validationSchema={leftProfileFormValidation}
       onSubmit={async (values, { setSubmitting }) => {
@@ -35,23 +36,31 @@ export default function LeftProfileForm() {
               label="Name*"
               errors={errors}
               touched={touched}
+              labelText="white"
             />
             <InputField
               name="email"
               label="Email*"
               errors={errors}
               touched={touched}
+              labelText="white"
               disabled
             />
             <InputField
               name="location"
-              label="Locataion*"
+              label="Locataion"
+              labelText="white"
               errors={errors}
               touched={touched}
             />
-            <Button type="submit" className="w">
-              Save
-            </Button>
+            <InputField
+              name="organization"
+              label="Organization"
+              labelText="white"
+              errors={errors}
+              touched={touched}
+            />
+            <Button type="submit">Save</Button>
           </Flex>
         </Form>
       )}
