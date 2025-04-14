@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 export default function useOutSideClick(
-  currentRef: React.MutableRefObject<HTMLDivElement | null>,
+  currentRef: React.MutableRefObject<HTMLDivElement | null | any>,
   cb: () => void,
   isOpened: boolean
 ) {

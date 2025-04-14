@@ -8,6 +8,7 @@ import Button from "./ui/Button";
 import { leftProfileFormService } from "@/services/profile.service";
 import useFetchUser from "@/hooks/useFetchUser";
 import HeadingTitle from "./common/HeadingTitle";
+import useOutSideClick from "@/hooks/useOutSideClick";
 
 export default function TechnicalSkills() {
   return (
@@ -28,6 +29,12 @@ const Input = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [suggetions, setSuggetions] = useState<string[]>(techStacks);
   const [activeRow, setActiveRow] = useState(0);
+  const suggetionRef = useRef<HTMLUListElement | null>(null);
+  useOutSideClick(
+    suggetionRef,
+    () => setShowSuggestions(false),
+    showSuggestions
+  );
   useEffect(() => {
     const skills = user?.skills;
     let skillsArrey: string[] = [];
@@ -97,14 +104,15 @@ const Input = () => {
               className="border-none focus:outline-none text-myprimary"
             />
             <ul
+              ref={suggetionRef}
               hidden={!showSuggestions}
-              className="  absolute max-h-[300px] w-[400px] overflow-y-auto  top-10 left-2 rounded-md shadow-lg"
+              className="absolute bg-white max-h-[300px] w-[400px] overflow-y-auto  top-10 left-2 rounded-md shadow-lg"
             >
               {suggetions.length > 0 ? (
                 suggetions.map((st, ind) => (
                   <li
                     key={ind}
-                    className={` px-4 py-2 cursor-pointer text-lg hover:bg-mysecondary hover:text-white ${
+                    className={` px-4 py-2  cursor-pointer text-lg hover:bg-mysecondary hover:text-white ${
                       activeRow == ind && "bg-mysecondary text-white"
                     }`}
                     onClick={() => {

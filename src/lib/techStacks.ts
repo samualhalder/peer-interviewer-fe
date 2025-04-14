@@ -177,6 +177,7 @@ export const techStacks: string[] = [
   "Next.js",
   "NLTK",
   "Nomad",
+  "Node.js",
   "Notion",
   "Nuxt.js",
   "NX",
