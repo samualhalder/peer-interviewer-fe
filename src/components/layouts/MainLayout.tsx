@@ -5,5 +5,5 @@ export default function MainLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="mt-[62px] p-4">{children}</div>;
+  return <div className="mt-[70px] p-4">{children}</div>;
 }

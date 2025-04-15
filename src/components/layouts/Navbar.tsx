@@ -12,6 +12,7 @@ import { UserType } from "@/types/entity.types";
 import useFetchUser from "@/hooks/useFetchUser";
 import Image from "next/image";
 import ImageCircle from "../common/ImageCircle";
+import { useRouter } from "next/router";
 
 const montserratFont = Montserrat({
   subsets: ["latin"],
@@ -91,18 +92,31 @@ function NotificationIcon() {
 }
 
 function SearchBar() {
+  const [searchTerm, setsearchTerm] = useState("");
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("submitted");
+
+    window.location.href = `/users/${encodeURIComponent(searchTerm)}`;
+  };
   return (
-    <div className={`flex justify-center items-center `}>
+    <form
+      className={`flex justify-center items-center overflow-hidden`}
+      onSubmit={(e) => handleSearch(e)}
+    >
       <input
         type="text"
         name=""
         id=""
+        placeholder="serch for a user"
+        onChange={(e) => setsearchTerm(e.target.value)}
         className=" h-[40px] w-[350px] rounded-3xl text-primary px-5 outline-none"
       />
+
       <IoIosSearch
         size={30}
         className=" relative bg-white text-primary right-12 cursor-pointer"
       />
-    </div>
+    </form>
   );
 }

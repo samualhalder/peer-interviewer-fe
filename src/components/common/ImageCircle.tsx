@@ -3,12 +3,12 @@ import React from "react";
 import { FaUserCircle } from "react-icons/fa";
 
 export default function ImageCircle({
-  width,
-  height,
+  width = 20,
+  height = 20,
   link,
 }: {
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
   link?: string;
 }) {
   return (

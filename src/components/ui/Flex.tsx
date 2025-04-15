@@ -7,6 +7,7 @@ const flexVariant = cva("w-[100%] flex shrink-0", {
     variant: {
       col: "flex-col",
       row: "flex-row",
+      wrap: "flex-wrap",
     },
     items: {
       start: "items-start",
@@ -39,7 +40,7 @@ const flexVariant = cva("w-[100%] flex shrink-0", {
 
 type propType = React.HTMLAttributes<HTMLDivElement> & {
   children: React.ReactNode;
-  variant?: "row" | "col";
+  variant?: "row" | "col" | "wrap";
   items?: "start" | "end" | "center";
   justify?: "start" | "end" | "center" | "between" | "around";
   gap?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";

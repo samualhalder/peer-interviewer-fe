@@ -123,6 +123,22 @@ const resetpasswordService = async (data: any) => {
     return false;
   }
 };
+const getUsersService = async (search: string) => {
+  try {
+    const result = await httpService.get<ResponseReturnType>(
+      `/auth/get-users?slug=${search}`
+    );
+    console.log("rs", result);
+
+    return result?.data?.result;
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      description: error?.response?.data?.message,
+    });
+    return [];
+  }
+};
 export {
   signUpService,
   signInService,
@@ -131,4 +147,5 @@ export {
   oAuhtService,
   fetchUser,
   resetpasswordService,
+  getUsersService,
 };
