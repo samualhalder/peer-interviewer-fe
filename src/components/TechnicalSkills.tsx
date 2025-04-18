@@ -9,6 +9,7 @@ import { leftProfileFormService } from "@/services/profile.service";
 import useFetchUser from "@/hooks/useFetchUser";
 import HeadingTitle from "./common/HeadingTitle";
 import useOutSideClick from "@/hooks/useOutSideClick";
+import Pill from "./Pills";
 
 export default function TechnicalSkills() {
   return (
@@ -137,15 +138,6 @@ const Input = () => {
       <Button className="mt-2" onClick={handleSave}>
         Save
       </Button>
-    </div>
-  );
-};
-
-const Pill = ({ value, onClick }: { value: string; onClick: () => void }) => {
-  return (
-    <div className="flex gap-2 items-center justify-between bg-mysecondary px-2 py-1 text-white rounded-sm shadow-md select-none ">
-      {value}
-      <RxCross1 onClick={onClick} />
     </div>
   );
 };

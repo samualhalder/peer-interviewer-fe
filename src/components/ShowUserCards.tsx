@@ -6,7 +6,6 @@ import UserCard from "./UserCard";
 
 export default function ShowUserCards({ search }: { search: string }) {
   const { users } = useFetchUsers(search);
-  console.log("users", users);
 
   return (
     <Flex variant="wrap" justify="start" gap="lg">

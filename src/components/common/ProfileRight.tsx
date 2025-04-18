@@ -5,7 +5,6 @@ import TechnicalSkills from "../TechnicalSkills";
 import Break from "./Break";
 import ResetPassword from "../ResetPassword";
 
-import AddDescription from "../AddDescription";
 
 export default function ProfileRight() {
   return (

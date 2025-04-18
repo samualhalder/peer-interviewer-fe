@@ -139,6 +139,21 @@ const getUsersService = async (search: string) => {
     return [];
   }
 };
+const getUsersByIdService = async (id: string) => {
+  try {
+    const result = await httpService.get<ResponseReturnType>(
+      `/auth/get-user/${id}`
+    );
+    console.log("rs", result);
+
+    return result?.data?.result;
+  } catch (error: any) {
+    console.log(error);
+
+    return {};
+  }
+};
+
 export {
   signUpService,
   signInService,
@@ -148,4 +163,5 @@ export {
   fetchUser,
   resetpasswordService,
   getUsersService,
+  getUsersByIdService,
 };

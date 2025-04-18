@@ -4,9 +4,10 @@ import Flex from "./ui/Flex";
 import ImageCircle from "./common/ImageCircle";
 import Button from "./ui/Button";
 import { UserType } from "@/types/entity.types";
+import { useRouter } from "next/navigation";
 
 export default function UserCard({ user }: { user: UserType }) {
-  console.log("loaded", user);
+  const router = useRouter();
 
   return (
     <Flex
@@ -15,7 +16,9 @@ export default function UserCard({ user }: { user: UserType }) {
     >
       <ImageCircle width={130} height={130} link={user.image} />
       <p>{user.name}</p>
-      <Button>View Profile</Button>
+      <Button onClick={() => router.push(`/user/${user.id}`)}>
+        View Profile
+      </Button>
     </Flex>
   );
 }
