@@ -9,6 +9,8 @@ export interface UserType {
   organization?: string;
   location?: string;
   skills?: string;
+  noOfFollowers: number;
+  noOfFollowings: number;
   isAccountDeleted?: boolean;
   createdAt?: Date;
 }
