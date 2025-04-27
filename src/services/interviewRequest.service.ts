@@ -46,6 +46,7 @@ const unsendService = async (data: any) => {
     return data;
   }
 };
+
 const isSentService = async (id: string) => {
   try {
     const result = await httpService.get<ResponseReturnType>(
@@ -61,5 +62,70 @@ const isSentService = async (id: string) => {
     return false;
   }
 };
+const list = async (order: string, status: string) => {
+  try {
+    const result = await httpService.get<ResponseReturnType>(
+      `/interview-requests/list?order=${order}&status=${status}`
+    );
 
-export { isSentService, sendService, unsendService };
+    return result.data.result;
+  } catch (error: any) {
+    return [];
+  }
+};
+const listSent = async (order: string, status: string) => {
+  try {
+    const result = await httpService.get<ResponseReturnType>(
+      `/interview-requests/list-sent?order=${order}&status=${status}`
+    );
+
+    return result.data.result;
+  } catch (error: any) {
+    return [];
+  }
+};
+const acceptService = async (id: string) => {
+  try {
+    const result = await httpService.put<ResponseReturnType>(
+      `/interview-requests/accept/${id}`
+    );
+    toast({
+      variant: "success",
+      description: result.data.message,
+    });
+    return result.data.result;
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      description: error?.response?.data?.message,
+    });
+    return false;
+  }
+};
+const rejectService = async (id: string) => {
+  try {
+    const result = await httpService.put<ResponseReturnType>(
+      `/interview-requests/reject/${id}`
+    );
+    toast({
+      variant: "success",
+      description: result.data.message,
+    });
+    return result.data.result;
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      description: error?.response?.data?.message,
+    });
+    return false;
+  }
+};
+export {
+  isSentService,
+  sendService,
+  unsendService,
+  list,
+  listSent,
+  acceptService,
+  rejectService,
+};
