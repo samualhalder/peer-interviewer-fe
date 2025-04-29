@@ -120,6 +120,17 @@ const rejectService = async (id: string) => {
     return false;
   }
 };
+
+const checkNewRequests = async () => {
+  try {
+    const result = await httpService.get<ResponseReturnType>(
+      `/interview-requests/is-new-requests`
+    );
+    return result.data.result;
+  } catch (error) {
+    return 0;
+  }
+};
 export {
   isSentService,
   sendService,
@@ -128,4 +139,5 @@ export {
   listSent,
   acceptService,
   rejectService,
+  checkNewRequests,
 };

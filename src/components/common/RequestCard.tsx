@@ -11,6 +11,8 @@ import {
 } from "@/services/interviewRequest.service";
 import clsx from "clsx";
 import { TabContext } from "@/app/requests/[id]/page";
+import { useDispatch } from "react-redux";
+import { remove } from "@/redux/requestsSlice";
 
 export default function RequestCard({
   request,
@@ -18,6 +20,7 @@ export default function RequestCard({
   request: InterviewRequestsType;
 }) {
   const { currentTab } = useContext(TabContext);
+  const dispatch = useDispatch();
   const user = currentTab == 0 ? request.fromuser : request.touser;
   return (
     <div
@@ -44,8 +47,21 @@ export default function RequestCard({
             currentTab == 1 && "invisible"
           )}
         >
-          <Button onClick={() => acceptService(request.id)}>Accept</Button>
-          <Button variant="outline" onClick={() => rejectService(request.id)}>
+          <Button
+            onClick={() => {
+              acceptService(request.id);
+              dispatch(remove());
+            }}
+          >
+            Accept
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              rejectService(request.id);
+              dispatch(remove());
+            }}
+          >
             Reject
           </Button>
         </div>

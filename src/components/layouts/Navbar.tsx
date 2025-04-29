@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Montserrat } from "next/font/google";
 import { IoIosNotificationsOutline, IoIosSearch } from "react-icons/io";
 import { FaUserFriends } from "react-icons/fa";
@@ -13,6 +13,11 @@ import DropDown from "../common/DropDown";
 import useFetchUser from "@/hooks/useFetchUser";
 
 import ImageCircle from "../common/ImageCircle";
+import { checkNewRequests } from "@/services/interviewRequest.service";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { useDispatch } from "react-redux";
+import { set } from "@/redux/requestsSlice";
 
 const montserratFont = Montserrat({
   subsets: ["latin"],
@@ -123,13 +128,24 @@ function SearchBar() {
 }
 
 function Requests() {
+  const { isNewRequests } = useSelector((state: RootState) => state.requests);
   const { user } = useFetchUser();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const fetchIsNewRequests = async () => {
+      const res = await checkNewRequests();
+      dispatch(set(res));
+    };
+    fetchIsNewRequests();
+  }, []);
   return (
     <Link
       href={`/requests/${user?.id}`}
       className={`relative select-none w-[40px] h-[40px] flex justify-center items-center hover:bg-blue-500 rounded-full cursor-pointer`}
     >
-      <div className="w-2 h-2 bg-red-600 rounded absolute top-1 right-1"></div>
+      {isNewRequests > 0 && (
+        <div className="w-2 h-2 bg-red-600 rounded absolute top-1 right-1"></div>
+      )}
       <FaUserFriends size={30} />
     </Link>
   );

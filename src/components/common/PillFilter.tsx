@@ -4,7 +4,7 @@ import React from "react";
 
 export default function PillFilter({ fields }: { fields: FilterFieldType[] }) {
   return (
-    <div className=" flex min-w-full px-3 py-2 gap-2 overflow-x-auto">
+    <div className=" flex min-w-full px-3 py-2 gap-2 overflow-x-auto justify-center">
       {fields.map((field, ind) => (
         <Pill field={field} key={ind} />
       ))}

@@ -41,7 +41,7 @@ function Header({
   return (
     <div
       className={clsx(
-        "flex items-center justify-center py-2 px-4 text-lg text-myprimary font-semibold",
+        "flex items-center justify-center py-2 px-4 text-lg text-myprimary font-semibold cursor-pointer",
         currentValue == tab.index && "border-b-2 border-myprimary"
       )}
       onClick={() => setCurrentValue(tab.index)}

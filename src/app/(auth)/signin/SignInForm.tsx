@@ -38,6 +38,7 @@ export default function SignInForm() {
                 touched={touched}
                 as="input"
                 label="Email*"
+                labelText="white"
               />
               <InputField
                 name="password"
@@ -46,6 +47,7 @@ export default function SignInForm() {
                 as="input"
                 label="Password*"
                 type="password"
+                labelText="white"
               />
               <Button
                 className="w-full mt-5 border-white border-[1px]"

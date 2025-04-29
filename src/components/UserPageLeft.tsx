@@ -51,11 +51,11 @@ export default function UserPageLeft() {
           </Flex>
           <p className="text-xl text-white font-medium flex gap-2 items-center">
             <GoOrganization />
-            {user?.organization}
+            {user?.organization || "----"}
           </p>
           <p className="text-xl text-white font-medium flex gap-2 items-center">
             <GoLocation />
-            {user?.location}
+            {user?.location || "----"}
           </p>
           {!isFollowing ? (
             <Button
