@@ -13,7 +13,7 @@ export default function UserPageLayout({
 }) {
   const { user } = useGetUserById(id);
   return (
-    <div className="p-2 grid md:grid-cols-3 gap-2">
+    <div className="p-2 grid md:grid-cols-3 gap-2 ">
       <UserContext.Provider value={user}>{children}</UserContext.Provider>
     </div>
   );

@@ -36,10 +36,10 @@ export default function UserPageLeft() {
     if (user?.id) checkSend(user.id);
   }, [user?.id]);
   return (
-    <div className="md:col-span-1 rounded-md md:h-screen bg-gradient-to-br from-myprimary  to-mysecondary">
-      <Flex gap="2xl" className="py-5 px-2">
+    <div className="md:col-span-1 rounded-md md:h-[100%] bg-gradient-to-br from-myprimary  to-mysecondary">
+      <Flex gap="sm" className="py-5 px-2">
         <ImageCircle width={280} height={280} link={user?.image} />
-        <Flex items="start" className="p-5" gap="xl">
+        <Flex items="start" className="p-5" gap="md">
           <p className="text-4xl text-white font-semibold">{user?.name}</p>
           <Flex variant="row" justify="start">
             <p className="text-white font-medium">

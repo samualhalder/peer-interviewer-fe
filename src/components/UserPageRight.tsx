@@ -7,16 +7,17 @@ import ProfileCard from "./common/ProfileCard";
 import Flex from "./ui/Flex";
 import ShowSkills from "./ShowSkills";
 import { UserContext } from "./layouts/UserPageLayout";
+import Chat from "./common/Chat";
 
 export default function UserPageRight() {
   const user = useContext(UserContext);
   return (
     <>
       <Flex
-        gap="3xl"
-        className="md:col-span-2 p-2 rounded-md h-screen "
+        gap="xl"
+        className="md:col-span-2 p-2 rounded-md md:h-[100%]"
         items="center"
-        justify="start"
+        justify="between"
       >
         <Flex variant="row" items="center" justify="between">
           <ProfileCard
@@ -38,9 +39,9 @@ export default function UserPageRight() {
         </Flex>
         <Flex items="start" className="">
           <ShowSkills skills={user?.skills} />
-          <Break color="blue" />
-          TO DO : Chat Section
+          <Break color="#025AE0" />
         </Flex>
+        <Chat />
       </Flex>
     </>
   );
