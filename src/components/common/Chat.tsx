@@ -1,124 +1,56 @@
-import React from "react";
+"use client";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import ChatInput from "../ChatInput";
-import Break from "./Break";
 import ChatText from "./ChatText";
-const dummyChatArray = [
-  {
-    id: "1",
-    text: "Hey! How's it going?",
-    time: new Date(),
-    isMe: true,
-    image: undefined,
-    isLast: true,
-  },
-  {
-    id: "2",
-    text: "I'm doing great! Just finished a project.",
-    time: new Date(),
-    isMe: false,
-    image: undefined,
-    isLast: true,
-  },
-  {
-    id: "3",
-    text: "Awesome! What was it about?",
-    time: new Date(),
-    isMe: true,
-    image: undefined,
-    isLast: true,
-  },
-  {
-    id: "4",
-    text: "Built a simple chat UI with React.",
-    time: new Date(),
-    isMe: false,
-    image: undefined,
-    isLast: true,
-  },
-  {
-    id: "5",
-    text: "That's cool! Got a link to the project?",
-    time: new Date(),
-    isMe: true,
-    image: undefined,
-    isLast: true,
-  },
-  {
-    id: "6",
-    text: "Sure! Here it is: https://github.com/example/chat-ui",
-    time: new Date(),
-    isMe: false,
-    image: undefined,
-    isLast: true,
-  },
-  {
-    id: "7",
-    text: "Looks neat! I'll check it out later.",
-    time: new Date(),
-    isMe: true,
-    image: undefined,
-    isLast: false,
-  },
-  {
-    id: "8",
-    text: "By the way, did you see the latest AI news?",
-    time: new Date(),
-    isMe: true,
-    image: undefined,
-    isLast: true,
-  },
-  {
-    id: "9",
-    text: "Nope! What's happening?",
-    time: new Date(),
-    isMe: false,
-    image: undefined,
-    isLast: false,
-  },
-  {
-    id: "10",
-    text: "AI just beat humans at a creative writing contest!",
-    time: new Date(),
-    isMe: false,
-    image: undefined,
-    isLast: true,
-  },
-  {
-    id: "11",
-    text: "Woah, that's both awesome and kinda scary!",
-    time: new Date(),
-    isMe: true,
-    image: undefined,
-    isLast: true,
-  },
-  {
-    id: "12",
-    text: "Haha, yeah! Who knows what's next?",
-    time: new Date(),
-    isMe: false,
-    image: undefined,
-    isLast: true,
-  },
-];
+import { useSocket } from "@/utils/socket";
+import { UserContext } from "../layouts/UserPageLayout";
+import { ChatType } from "@/types/chat.types";
+import useFetchUser from "@/hooks/useFetchUser";
+import { listChatService } from "@/services/char.service";
 
 export default function Chat() {
+  const to = useContext(UserContext);
+  const { user } = useFetchUser();
+  const [chats, setChats] = useState<ChatType[]>([]);
+  const socket = useSocket();
+  const chatDivRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    socket?.on("connect", () => {
+      console.log("connect to the socket");
+    });
+    socket?.on("get-socketId", (id: any) => {
+      console.log("my socket id is ", id);
+    });
+    return () => {
+      socket?.off("connect");
+      socket?.off("get-socket-id");
+    };
+  }, []);
+  useEffect(() => {
+    const fetchChats = async () => {
+      const res = await listChatService(to?.id as string);
+      setChats([...res]);
+    };
+    if (to?.id) fetchChats();
+  }, [to]);
+
   return (
     <div className="  flex flex-col gap-5 h-screen md:h-[400px] px-2 w-full">
-      <div className=" h-[95%] overflow-y-scroll ">
-        {dummyChatArray.map((chat) => (
+      <div className=" h-[95%] overflow-y-scroll " ref={chatDivRef}>
+        {chats.map((chat, ind) => (
           <ChatText
             key={chat.id}
-            image={chat.image}
             text={chat.text}
-            isMe={chat.isMe}
-            isLast={chat.isLast}
+            image={chat.fromUser?.image as string}
+            isMe={user?.id == chat.from ? true : false}
+            isLast={ind == chats.length - 1 || chat.from != chats[ind + 1].from}
             id={chat.id}
-            time={chat.time}
+            time={chat.createdAt}
           />
         ))}
       </div>
 
-      <ChatInput />
+      <ChatInput setChats={setChats} chats={chats} chatDivRef={chatDivRef} />
     </div>
   );
 }

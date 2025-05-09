@@ -12,6 +12,8 @@ type propType = {
 };
 
 export default function ChatText(props: propType) {
+  console.log("pr", props);
+
   return (
     <div
       className={clsx("flex mt-1 mb-1 items-end gap-2", {
@@ -33,7 +35,7 @@ export default function ChatText(props: propType) {
       >
         <p>{props.text}</p>
         <div className="flex justify-end">
-          <p className="text-sm">{moment(props.time).format("HH:MM")}</p>
+          <p className="text-sm">{moment(props.time).format("HH:mm")}</p>
         </div>
       </div>
       {props.isLast && props.isMe && (
