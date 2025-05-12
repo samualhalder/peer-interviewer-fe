@@ -12,8 +12,6 @@ type propType = {
 };
 
 export default function ChatText(props: propType) {
-  console.log("pr", props);
-
   return (
     <div
       className={clsx("flex mt-1 mb-1 items-end gap-2", {

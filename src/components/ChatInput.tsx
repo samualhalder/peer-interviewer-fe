@@ -9,41 +9,41 @@ import { ChatType } from "@/types/chat.types";
 import useFetchUser from "@/hooks/useFetchUser";
 import { createChatId } from "@/utils/createChatId";
 import { UserType } from "@/types/entity.types";
+import { useSocket } from "@/utils/socket";
 
-export default function ChatInput({
-  setChats,
-  chats,
-  chatDivRef,
-}: {
-  setChats: React.Dispatch<React.SetStateAction<ChatType[]>>;
-  chats: ChatType[];
-  chatDivRef: React.RefObject<HTMLDivElement | null>;
-}) {
+export default function ChatInput() {
+  const socket = useSocket();
   const to = useContext(UserContext);
   const { user } = useFetchUser();
   const [text, settext] = useState("");
+  const chatId = createChatId(to?.id as string, user?.id as string);
   const handleSend = async () => {
     if (text.length == 0) return;
-    setChats([
-      ...chats,
-      {
-        chatId: createChatId(to?.id as string, user?.id as string),
+    // setChats([
+    //   ...chats,
+    //   {
+    //     chatId: chatId,
+    //     from: user?.id,
+    //     to: to?.id as string,
+    //     text: text,
+    //     createdAt: new Date(),
+    //     fromUser: user as UserType,
+    //     toUser: to as UserType,
+    //   },
+    // ]);
+    const res = await sendChatService({ to: to?.id, text: text });
+
+    if (res.success) {
+      settext("");
+      socket?.emit(`message`, {
+        chatId: chatId,
         from: user?.id,
         to: to?.id as string,
         text: text,
         createdAt: new Date(),
         fromUser: user as UserType,
         toUser: to as UserType,
-      },
-    ]);
-    console.log("snd", chats);
-
-    const res = await sendChatService({ to: to?.id, text: text });
-
-    if (res.success) {
-      settext("");
-      if (chatDivRef.current)
-        chatDivRef.current.scrollTop = chatDivRef.current.scrollHeight;
+      });
     } else {
     }
   };

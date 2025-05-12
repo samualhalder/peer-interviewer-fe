@@ -7,6 +7,7 @@ import { UserContext } from "../layouts/UserPageLayout";
 import { ChatType } from "@/types/chat.types";
 import useFetchUser from "@/hooks/useFetchUser";
 import { listChatService } from "@/services/char.service";
+import { createChatId } from "@/utils/createChatId";
 
 export default function Chat() {
   const to = useContext(UserContext);
@@ -14,25 +15,32 @@ export default function Chat() {
   const [chats, setChats] = useState<ChatType[]>([]);
   const socket = useSocket();
   const chatDivRef = useRef<HTMLDivElement | null>(null);
+  const chatId = createChatId(to?.id as string, user?.id as string);
+  const [newChats, setNewChats] = useState(false);
   useEffect(() => {
-    socket?.on("connect", () => {
-      console.log("connect to the socket");
+    socket?.on(`${chatId}`, (data) => {
+      setChats([...chats, data]);
+      setNewChats(true);
     });
-    socket?.on("get-socketId", (id: any) => {
-      console.log("my socket id is ", id);
-    });
+
     return () => {
-      socket?.off("connect");
-      socket?.off("get-socket-id");
+      socket?.off(chatId);
     };
-  }, []);
+  }, [chatId, socket, setChats, chats]);
+  useEffect(() => {
+    if (chatDivRef.current) {
+      chatDivRef.current.scrollTop = chatDivRef.current.scrollHeight;
+      setNewChats(false);
+    }
+  }, [newChats]);
   useEffect(() => {
     const fetchChats = async () => {
       const res = await listChatService(to?.id as string);
       setChats([...res]);
+      setNewChats(true);
     };
     if (to?.id) fetchChats();
-  }, [to]);
+  }, [to, chatDivRef.current]);
 
   return (
     <div className="  flex flex-col gap-5 h-screen md:h-[400px] px-2 w-full">
@@ -50,7 +58,7 @@ export default function Chat() {
         ))}
       </div>
 
-      <ChatInput setChats={setChats} chats={chats} chatDivRef={chatDivRef} />
+      <ChatInput />
     </div>
   );
 }
