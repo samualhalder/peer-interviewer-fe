@@ -17,12 +17,14 @@ import {
   isSentService,
   sendService,
   unsendService,
+  isAccepted as isAcceptedService,
 } from "@/services/interviewRequest.service";
 
 export default function UserPageLeft() {
   const user = useContext(UserContext);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const [isAccepted, setIsAccepted] = useState(false);
   useEffect(() => {
     const checkFollowing = async (id: string) => {
       const res = await isFollowingService(id);
@@ -32,8 +34,13 @@ export default function UserPageLeft() {
       const res = await isSentService(id);
       setIsSent(res);
     };
+    const checkIsAccepted = async (id: string) => {
+      const res = await isAcceptedService(id);
+      setIsAccepted(res);
+    };
     if (user?.id) checkFollowing(user?.id);
     if (user?.id) checkSend(user.id);
+    if (user?.id) checkIsAccepted(user.id);
   }, [user?.id]);
   return (
     <div className="md:col-span-1 rounded-md md:h-[100%] bg-gradient-to-br from-myprimary  to-mysecondary">
@@ -104,6 +111,9 @@ export default function UserPageLeft() {
               <MdCancelScheduleSend fontSize={25} color="red" />
               Remove Request For Interview
             </Button>
+          )}
+          {isAccepted && (
+            <Button className="w-full bg-green-500">Start The Interview</Button>
           )}
         </Flex>
       </Flex>

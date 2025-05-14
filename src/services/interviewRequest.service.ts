@@ -131,6 +131,29 @@ const checkNewRequests = async () => {
     return 0;
   }
 };
+const isAccepted = async (id: string) => {
+  try {
+    const result = await httpService.get<ResponseReturnType>(
+      `/interview-requests/is-accepted/${id}`
+    );
+    if (result.data.result.length > 0) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return false;
+  }
+};
+const canChatService = async (id: string) => {
+  try {
+    const result = await httpService.get<ResponseReturnType>(
+      `/interview-requests/can-chat/${id}`
+    );
+    return result.data.result;
+  } catch (error) {
+    return false;
+  }
+};
 export {
   isSentService,
   sendService,
@@ -140,4 +163,6 @@ export {
   acceptService,
   rejectService,
   checkNewRequests,
+  isAccepted,
+  canChatService,
 };

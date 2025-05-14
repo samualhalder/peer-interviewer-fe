@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import Break from "./common/Break";
 import ProfileCard from "./common/ProfileCard";
@@ -8,9 +8,22 @@ import Flex from "./ui/Flex";
 import ShowSkills from "./ShowSkills";
 import { UserContext } from "./layouts/UserPageLayout";
 import Chat from "./common/Chat";
+import { canChatService } from "@/services/interviewRequest.service";
+import CantChat from "./CantChat";
 
 export default function UserPageRight() {
   const user = useContext(UserContext);
+  const [canChat, setcanChat] = useState(false);
+  useEffect(() => {
+    const checkCanChat = async (id: string) => {
+      const res = await canChatService(id);
+      setcanChat(res);
+    };
+
+    if (user?.id) checkCanChat(user.id);
+  }, [user?.id]);
+  console.log("cc", canChat);
+
   return (
     <>
       <Flex
@@ -41,7 +54,7 @@ export default function UserPageRight() {
           <ShowSkills skills={user?.skills} />
           <Break color="#025AE0" />
         </Flex>
-        <Chat />
+        {canChat ? <Chat /> : <CantChat />}
       </Flex>
     </>
   );
