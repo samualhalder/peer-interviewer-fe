@@ -19,12 +19,18 @@ import {
   unsendService,
   isAccepted as isAcceptedService,
 } from "@/services/interviewRequest.service";
+import { createRoom } from "@/utils/createRoom";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { useRouter } from "next/navigation";
 
 export default function UserPageLeft() {
-  const user = useContext(UserContext);
+  const to = useContext(UserContext);
+  const { user } = useSelector((state: RootState) => state.user);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isSent, setIsSent] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
+  const router = useRouter();
   useEffect(() => {
     const checkFollowing = async (id: string) => {
       const res = await isFollowingService(id);
@@ -38,37 +44,41 @@ export default function UserPageLeft() {
       const res = await isAcceptedService(id);
       setIsAccepted(res);
     };
-    if (user?.id) checkFollowing(user?.id);
-    if (user?.id) checkSend(user.id);
-    if (user?.id) checkIsAccepted(user.id);
-  }, [user?.id]);
+    if (to?.id) checkFollowing(to?.id);
+    if (to?.id) checkSend(to.id);
+    if (to?.id) checkIsAccepted(to.id);
+  }, [to?.id]);
+  const handleStartInterview = async () => {
+    const room = createRoom(to?.id as string, user?.id as string);
+    router.push(`/interview-room/${room}`);
+  };
   return (
     <div className="md:col-span-1 rounded-md md:h-[100%] bg-gradient-to-br from-myprimary  to-mysecondary">
       <Flex gap="sm" className="py-5 px-2">
-        <ImageCircle width={280} height={280} link={user?.image} />
+        <ImageCircle width={280} height={280} link={to?.image} />
         <Flex items="start" className="p-5" gap="md">
-          <p className="text-4xl text-white font-semibold">{user?.name}</p>
+          <p className="text-4xl text-white font-semibold">{to?.name}</p>
           <Flex variant="row" justify="start">
             <p className="text-white font-medium">
-              followers {user?.noOfFollowers}
+              followers {to?.noOfFollowers}
             </p>
             <p className="text-white font-medium">
-              following {user?.noOfFollowings}
+              following {to?.noOfFollowings}
             </p>
           </Flex>
           <p className="text-xl text-white font-medium flex gap-2 items-center">
             <GoOrganization />
-            {user?.organization || "----"}
+            {to?.organization || "----"}
           </p>
           <p className="text-xl text-white font-medium flex gap-2 items-center">
             <GoLocation />
-            {user?.location || "----"}
+            {to?.location || "----"}
           </p>
           {!isFollowing ? (
             <Button
               className="w-full flex items-center justify-center gap-3"
               onClick={() => {
-                followService({ followed: user?.id });
+                followService({ followed: to?.id });
                 setIsFollowing(true);
               }}
             >
@@ -79,7 +89,7 @@ export default function UserPageLeft() {
             <Button
               className="w-full flex items-center justify-center gap-3"
               onClick={() => {
-                unFollowService({ followed: user?.id });
+                unFollowService({ followed: to?.id });
                 setIsFollowing(false);
               }}
             >
@@ -92,7 +102,7 @@ export default function UserPageLeft() {
               variant="outline"
               className="w-full flex items-center justify-center gap-3"
               onClick={() => {
-                sendService({ to: user?.id });
+                sendService({ to: to?.id });
                 setIsSent(true);
               }}
             >
@@ -104,7 +114,7 @@ export default function UserPageLeft() {
               variant="outline"
               className="w-full flex items-center justify-center gap-3"
               onClick={() => {
-                unsendService({ to: user?.id });
+                unsendService({ to: to?.id });
                 setIsSent(false);
               }}
             >
@@ -113,7 +123,12 @@ export default function UserPageLeft() {
             </Button>
           )}
           {isAccepted && (
-            <Button className="w-full bg-green-500">Start The Interview</Button>
+            <Button
+              className="w-full bg-green-500"
+              onClick={handleStartInterview}
+            >
+              Start The Interview
+            </Button>
           )}
         </Flex>
       </Flex>

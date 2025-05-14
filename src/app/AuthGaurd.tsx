@@ -3,29 +3,42 @@ import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import TokenUtils from "@/utils/token.utils";
 import { checkValidToken } from "../services/auth.service";
+import useFetchUser from "@/hooks/useFetchUser";
+import { setUser, removeUser } from "@/redux/userSlice";
+import { useDispatch } from "react-redux";
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const dispatch = useDispatch();
   const router = useRouter();
   const pathname = usePathname();
   const token = TokenUtils?.getToken() as string;
+  const { user } = useFetchUser();
+  console.log("whoami", user);
 
   const publicPaths = ["/signin", "/signup"];
 
   useEffect(() => {
-    setIsCheckingAuth(true);
     const fun = async () => {
       setIsCheckingAuth(true);
       const res = await checkValidToken(token);
 
       if (!res && !publicPaths.includes(pathname)) {
+        dispatch(removeUser());
         router.push("/signin");
       }
-      if (res && publicPaths.includes(pathname)) router.push("/");
+      if (res && publicPaths.includes(pathname)) {
+        router.push("/");
+      }
+      if (res && !publicPaths.includes(pathname)) {
+        console.log("before dis", user);
+
+        dispatch(setUser(user));
+      }
       setIsCheckingAuth(false);
     };
     fun();
-  }, [token]);
+  }, [token, user]);
 
   return isCheckingAuth ? null : children;
 };
