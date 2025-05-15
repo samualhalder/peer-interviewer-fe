@@ -23,9 +23,12 @@ import { createRoom } from "@/utils/createRoom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
+import { useSocket } from "@/context/SocketContext";
+import { createChatId } from "@/utils/createChatId";
 
 export default function UserPageLeft() {
   const to = useContext(UserContext);
+  const socket = useSocket();
   const { user } = useSelector((state: RootState) => state.user);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isSent, setIsSent] = useState(false);
@@ -49,7 +52,8 @@ export default function UserPageLeft() {
     if (to?.id) checkIsAccepted(to.id);
   }, [to?.id]);
   const handleStartInterview = async () => {
-    const room = createRoom(to?.id as string, user?.id as string);
+    const room = createChatId(to?.id as string, user?.id as string);
+    socket?.emit("start-interview", { room });
     router.push(`/interview-room/${room}`);
   };
   return (

@@ -8,23 +8,43 @@ import useFetchUser from "@/hooks/useFetchUser";
 import { listChatService } from "@/services/char.service";
 import { createChatId } from "@/utils/createChatId";
 import { useSocket } from "@/context/SocketContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import Modal from "../ui/Modal";
+import { useRouter } from "next/navigation";
 
 export default function Chat() {
   const to = useContext(UserContext);
-  const { user } = useFetchUser();
+  const { user } = useSelector((state: RootState) => state.user);
   const [chats, setChats] = useState<ChatType[]>([]);
   const socket = useSocket();
   const chatDivRef = useRef<HTMLDivElement | null>(null);
   const chatId = createChatId(to?.id as string, user?.id as string);
   const [newChats, setNewChats] = useState(false);
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const currentRoom = createChatId(to?.id as string, user?.id as string);
+  const router = useRouter();
+  const handleInterviewRequest = (data: { room: string }) => {
+    const { room } = data;
+    if (room == currentRoom) {
+      setShowRequestModal(true);
+    }
+  };
+  const onReject = () => {
+    setShowRequestModal(false);
+    socket?.emit("request-declined", { room: currentRoom });
+  };
   useEffect(() => {
+    socket?.emit("join-room", { chatId });
     socket?.on(`${chatId}`, (data) => {
       setChats([...chats, data]);
       setNewChats(true);
     });
+    socket?.on("interview-start-request", handleInterviewRequest);
 
     return () => {
       socket?.off(chatId);
+      socket?.off("interview-start-request");
     };
   }, [chatId, socket, setChats, chats]);
   useEffect(() => {
@@ -59,6 +79,15 @@ export default function Chat() {
       </div>
 
       <ChatInput />
+      <Modal
+        isOpen={showRequestModal}
+        title={"Incoming Call"}
+        descripton="You got the interview call accept to continue with the interview."
+        onAccept={() => {
+          router.push(`/interview-room/${currentRoom}`);
+        }}
+        onClose={onReject}
+      />
     </div>
   );
 }
