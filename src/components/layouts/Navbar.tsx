@@ -73,7 +73,6 @@ function Title() {
 function Avatar() {
   const [isVissible, setIsVissible] = useState<boolean>(false);
   const { user } = useFetchUser();
-  console.log(user);
 
   return (
     <div
@@ -101,7 +100,6 @@ function SearchBar() {
   const [searchTerm, setsearchTerm] = useState("");
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("submitted");
 
     window.location.href = `/users/${encodeURIComponent(searchTerm)}`;
   };

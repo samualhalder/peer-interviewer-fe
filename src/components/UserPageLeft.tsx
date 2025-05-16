@@ -25,6 +25,7 @@ import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import { useSocket } from "@/context/SocketContext";
 import { createChatId } from "@/utils/createChatId";
+import PeerService from "@/services/peer.service";
 
 export default function UserPageLeft() {
   const to = useContext(UserContext);
@@ -53,7 +54,8 @@ export default function UserPageLeft() {
   }, [to?.id]);
   const handleStartInterview = async () => {
     const room = createChatId(to?.id as string, user?.id as string);
-    socket?.emit("start-interview", { room });
+    const offer = await PeerService.getOffer();
+    socket?.emit("start-interview", { room, offer });
     router.push(`/interview-room/${room}`);
   };
   return (

@@ -9,11 +9,9 @@ export default function Page() {
   useEffect(() => {
     const ck = async () => {
       const res = await checkValidToken();
-      console.log("rs", res);
 
       return res;
     };
-    console.log("ck", ck());
   }, []);
   return (
     <>

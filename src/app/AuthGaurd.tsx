@@ -14,7 +14,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const token = TokenUtils?.getToken() as string;
   const { user } = useFetchUser();
-  console.log("whoami", user);
+
 
   const publicPaths = ["/signin", "/signup"];
 
@@ -31,7 +31,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
         router.push("/");
       }
       if (res && !publicPaths.includes(pathname)) {
-        console.log("before dis", user);
+
 
         dispatch(setUser(user));
       }

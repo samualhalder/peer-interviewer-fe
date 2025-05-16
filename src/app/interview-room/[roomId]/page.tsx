@@ -7,7 +7,6 @@ export default async function Page({
   params: Promise<{ roomId: string }>;
 }) {
   const { roomId } = await params;
-  console.log("rmid", roomId);
 
   return (
     <div className="mt-80 h-screen">

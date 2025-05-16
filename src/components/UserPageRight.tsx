@@ -22,7 +22,6 @@ export default function UserPageRight() {
 
     if (user?.id) checkCanChat(user.id);
   }, [user?.id]);
-  console.log("cc", canChat);
 
   return (
     <>

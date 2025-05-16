@@ -22,7 +22,7 @@ export default function LeftProfileForm() {
       }}
       validationSchema={leftProfileFormValidation}
       onSubmit={async (values, { setSubmitting }) => {
-        console.log("form is subbmitng ", values);
+
         setSubmitting(true);
         await leftProfileFormService(values);
         setSubmitting(false);

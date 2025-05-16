@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import Modal from "../ui/Modal";
 import { useRouter } from "next/navigation";
+import PeerService from "@/services/peer.service";
 
 export default function Chat() {
   const to = useContext(UserContext);
@@ -23,12 +24,22 @@ export default function Chat() {
   const [newChats, setNewChats] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const currentRoom = createChatId(to?.id as string, user?.id as string);
+  const [remoteDescription, setRemoteDescription] =
+    useState<RTCSessionDescription | null>(null);
   const router = useRouter();
-  const handleInterviewRequest = (data: { room: string }) => {
-    const { room } = data;
+  const handleInterviewRequest = (data: any) => {
+    const { room, offer } = data;
+    setRemoteDescription(offer);
     if (room == currentRoom) {
       setShowRequestModal(true);
     }
+  };
+  const onAccept = async () => {
+    if (remoteDescription) {
+      const answer = await PeerService.getAnswear(remoteDescription);
+      socket?.emit("call-accepted", { room: currentRoom, answer });
+    }
+    router.push(`/interview-room/${currentRoom}`);
   };
   const onReject = () => {
     setShowRequestModal(false);
@@ -83,9 +94,7 @@ export default function Chat() {
         isOpen={showRequestModal}
         title={"Incoming Call"}
         descripton="You got the interview call accept to continue with the interview."
-        onAccept={() => {
-          router.push(`/interview-room/${currentRoom}`);
-        }}
+        onAccept={onAccept}
         onClose={onReject}
       />
     </div>

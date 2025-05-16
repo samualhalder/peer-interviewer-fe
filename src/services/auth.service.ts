@@ -128,7 +128,6 @@ const getUsersService = async (search: string) => {
     const result = await httpService.get<ResponseReturnType>(
       `/auth/get-users?slug=${search}`
     );
-    console.log("rs", result);
 
     return result?.data?.result;
   } catch (error: any) {
@@ -144,7 +143,6 @@ const getUsersByIdService = async (id: string) => {
     const result = await httpService.get<ResponseReturnType>(
       `/auth/get-user/${id}`
     );
-    console.log("rs", result);
 
     return result?.data?.result;
   } catch (error: any) {
