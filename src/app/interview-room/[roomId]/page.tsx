@@ -9,8 +9,7 @@ export default async function Page({
   const { roomId } = await params;
 
   return (
-    <div className="mt-80 h-screen">
-      {roomId}
+    <div className="">
       <VideoRoom roomId={roomId} />
     </div>
   );

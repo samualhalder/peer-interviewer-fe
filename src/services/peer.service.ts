@@ -7,7 +7,7 @@ class PeerServiceClass {
           {
             urls: [
               "stun:stun.l.google.com:19302",
-              "stun:stun.l.google.com:5349",
+              "stun:global.stun.twilio.com:3478",
             ],
           },
         ],
@@ -17,11 +17,11 @@ class PeerServiceClass {
   async getOffer() {
     if (this.peer) {
       const offer = await this.peer.createOffer();
-      this.peer.setLocalDescription(new RTCSessionDescription(offer));
+      await this.peer.setLocalDescription(new RTCSessionDescription(offer));
       return offer;
     }
   }
-  async getAnswear(offer: RTCSessionDescription) {
+  async getAnswer(offer: RTCSessionDescriptionInit) {
     if (this.peer) {
       await this.peer.setRemoteDescription(offer);
       const answer = await this.peer.createAnswer(offer);
@@ -36,5 +36,52 @@ class PeerServiceClass {
   }
 }
 
-const PeerService = new PeerServiceClass();
-export default PeerService;
+export default new PeerServiceClass();
+// class PeerServiceClass {
+//   public peer?: RTCPeerConnection;
+
+//   constructor() {
+//     if (!this.peer) {
+//       this.peer = new RTCPeerConnection({
+//         iceServers: [
+//           {
+//             urls: [
+//               "stun:stun.l.google.com:19302",
+//               "stun:global.stun.twilio.com:3478",
+//             ],
+//           },
+//         ],
+//       });
+//     }
+//   }
+
+//   async getOffer() {
+//     if (this.peer) {
+//       const offer = await this.peer.createOffer();
+//       await this.peer.setLocalDescription(offer);
+//       return offer;
+//     }
+//   }
+
+//   async getAnswer(offer: RTCSessionDescriptionInit) {
+//     if (this.peer) {
+//       await this.peer.setRemoteDescription(offer);
+//       const answer = await this.peer.createAnswer();
+//       await this.peer.setLocalDescription(answer);
+//       return answer;
+//     }
+//   }
+
+//   async setRemoteDescription(answer: RTCSessionDescriptionInit) {
+//     if (this.peer) {
+//       await this.peer.setRemoteDescription(answer);
+//     }
+//   }
+//   async setLocalDescription(answer: RTCSessionDescription) {
+//     if (this.peer) {
+//       await this.peer.setRemoteDescription(new RTCSessionDescription(answer));
+//     }
+//   }
+// }
+
+// export default new PeerServiceClass();

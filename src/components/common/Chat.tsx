@@ -36,7 +36,7 @@ export default function Chat() {
   };
   const onAccept = async () => {
     if (remoteDescription) {
-      const answer = await PeerService.getAnswear(remoteDescription);
+      const answer = await PeerService.getAnswer(remoteDescription);
       socket?.emit("call-accepted", { room: currentRoom, answer });
     }
     router.push(`/interview-room/${currentRoom}`);
