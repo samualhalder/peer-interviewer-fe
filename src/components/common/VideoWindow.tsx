@@ -5,19 +5,23 @@ import Loader from "../ui/Loader";
 export default function VideoWindow({
   name,
   stream,
+  audio,
+  video,
 }: {
   name?: string;
-  stream?: MediaStream;
+  stream?: MediaStream | null;
+  audio: boolean;
+  video: boolean;
 }) {
   return (
-    <div className="relative w-[300px] h-[200px] border-2 border-myprimary rounded-md overflow-hidden flex items-center justify-center">
-      {stream ? (
+    <div className="relative w-[300px] h-[200px] border-2 border-white rounded-md overflow-hidden flex items-center justify-center z-30">
+      {video && stream ? (
         <ReactPlayer
           url={stream}
           playing={true}
           height="400px"
           width="300px"
-          muted
+          muted={!audio}
         />
       ) : (
         <div className="w-[300px] h-[400px] flex justify-center items-center">

@@ -4,15 +4,11 @@ import ChatInput from "../ChatInput";
 import ChatText from "./ChatText";
 import { UserContext } from "../layouts/UserPageLayout";
 import { ChatType } from "@/types/chat.types";
-import useFetchUser from "@/hooks/useFetchUser";
 import { listChatService } from "@/services/char.service";
 import { createChatId } from "@/utils/createChatId";
 import { useSocket } from "@/context/SocketContext";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import Modal from "../ui/Modal";
-import { useRouter } from "next/navigation";
-import PeerService from "@/services/peer.service";
 
 export default function Chat() {
   const to = useContext(UserContext);
@@ -22,40 +18,16 @@ export default function Chat() {
   const chatDivRef = useRef<HTMLDivElement | null>(null);
   const chatId = createChatId(to?.id as string, user?.id as string);
   const [newChats, setNewChats] = useState(false);
-  const [showRequestModal, setShowRequestModal] = useState(false);
-  const currentRoom = createChatId(to?.id as string, user?.id as string);
-  const [remoteDescription, setRemoteDescription] =
-    useState<RTCSessionDescription | null>(null);
-  const router = useRouter();
-  const handleInterviewRequest = (data: any) => {
-    const { room, offer } = data;
-    setRemoteDescription(offer);
-    if (room == currentRoom) {
-      setShowRequestModal(true);
-    }
-  };
-  const onAccept = async () => {
-    if (remoteDescription) {
-      const answer = await PeerService.getAnswer(remoteDescription);
-      socket?.emit("call-accepted", { room: currentRoom, answer });
-    }
-    router.push(`/interview-room/${currentRoom}`);
-  };
-  const onReject = () => {
-    setShowRequestModal(false);
-    socket?.emit("request-declined", { room: currentRoom });
-  };
+
   useEffect(() => {
     socket?.emit("join-room", { chatId });
     socket?.on(`${chatId}`, (data) => {
       setChats([...chats, data]);
       setNewChats(true);
     });
-    socket?.on("interview-start-request", handleInterviewRequest);
 
     return () => {
       socket?.off(chatId);
-      socket?.off("interview-start-request");
     };
   }, [chatId, socket, setChats, chats]);
   useEffect(() => {
@@ -90,13 +62,6 @@ export default function Chat() {
       </div>
 
       <ChatInput />
-      <Modal
-        isOpen={showRequestModal}
-        title={"Incoming Call"}
-        descripton="You got the interview call accept to continue with the interview."
-        onAccept={onAccept}
-        onClose={onReject}
-      />
     </div>
   );
 }

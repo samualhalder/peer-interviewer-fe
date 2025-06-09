@@ -3,13 +3,10 @@ import { useSocket } from "@/context/SocketContext";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import Modal from "./ui/Modal";
-import ReactPlayer from "react-player";
 import PeerService from "@/services/peer.service";
 import Button from "./ui/Button";
 import VideoWindow from "./common/VideoWindow";
-import ProfilePageLayout from "./layouts/ProfilePageLayout";
 import Flex from "./ui/Flex";
-import Break from "./common/Break";
 
 interface propType {
   roomId: string;
@@ -21,6 +18,14 @@ export default function VideoRoom(props: propType) {
   const [showWarning, setShowWarning] = useState(false);
   const [myStream, setMyStream] = useState<MediaStream | null>();
   const [remoteStream, setRemoteStream] = useState<any>(null);
+  const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
+  const [remoteCameraStream, setRemoteCameraStream] =
+    useState<MediaStream | null>(null);
+  const [remoteScreenStream, setRemoteScreenStream] =
+    useState<MediaStream | null>(null);
+  const [cameraPermission, setCameraPermission] = useState(false);
+  const [audioPermission, setAudioPermission] = useState(false);
+  const [screenPermission, setScreenPermission] = useState(false);
   useEffect(() => {
     const fetchMyStream = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -34,6 +39,7 @@ export default function VideoRoom(props: propType) {
   const [tracksAdded, setTracksAdded] = useState(false);
 
   const sendRemoteStream = useCallback(() => {
+    socket?.emit("share-video", { room: props.roomId });
     if (myStream && PeerService.peer && !tracksAdded) {
       myStream.getTracks().forEach((track) => {
         PeerService.peer!.addTrack(track, myStream);
@@ -88,10 +94,19 @@ export default function VideoRoom(props: propType) {
     };
   }, [socket, props.roomId]);
 
-  const handleTrack = async (ev: any) => {
-    const remoteStream = ev.streams;
-    setRemoteStream(remoteStream[0]);
-    console.log("check-rs", remoteStream[0]);
+  const handleTrack = async (ev) => {
+    const remoteStream = ev.streams[0];
+
+    const cameraTrack = remoteStream.getVideoTracks()[0]; // First video track is camera
+    const screenTrack = remoteStream.getVideoTracks()[1]; // Second video track is screen
+
+    const cameraStream = new MediaStream(cameraTrack ? [cameraTrack] : []);
+    const screenStream = new MediaStream(screenTrack ? [screenTrack] : []);
+
+    setRemoteCameraStream(cameraStream); // Store only camera feed
+    setRemoteScreenStream(screenStream); // Store only screen share
+
+    console.log("🔹 Remote Camera & Screen Streams Updated");
   };
   const handleIceCandidate = (event: any) => {
     if (event.candidate) {
@@ -123,12 +138,34 @@ export default function VideoRoom(props: propType) {
         PeerService.peer?.addIceCandidate(new RTCIceCandidate(data.candidate));
       }
     });
+    socket?.on(`screen-recording-${props.roomId}`, (data) => {
+      const recordedBlob = new Blob([data.videoBlob], { type: "video/webm" });
+      const videoUrl = URL.createObjectURL(recordedBlob);
+
+      setRecordedVideoUrl(videoUrl); // ✅ Update state instead of manipulating DOM directly
+    });
+    socket?.on(`audio-${props.roomId}`, () => {
+      setAudioPermission(true);
+    });
+    socket?.on(`video-${props.roomId}`, () => {
+      setCameraPermission(true);
+    });
+    socket?.on(`screen-${props.roomId}`, () => {
+      console.log("here screen", screenPermission);
+
+      setScreenPermission((pre) => !pre);
+    });
+
     return () => {
       socket?.off(`declined-${props.roomId}`);
       socket?.off(`call-accepted-${props.roomId}`);
       socket?.off(`nego-need-${props.roomId}`, handleNegosiationNeed);
       socket?.off(`nego-done-${props.roomId}`, handleNegosiationDone);
       socket?.off(`ice-candidate-${props.roomId}`);
+      socket?.off(`screen-recording-${props.roomId}`);
+      socket?.off(`audio-${props.roomId}`);
+      socket?.off(`video-${props.roomId}`);
+      socket?.off(`screen-${props.roomId}`);
     };
   }, [
     props.roomId,
@@ -137,7 +174,56 @@ export default function VideoRoom(props: propType) {
     handleOtherUserAcceptedCall,
     socket,
   ]);
+  const stopScreenShare = (screenTrack: MediaStreamTrack) => {
+    console.log("⛔ Stopping screen share...");
 
+    PeerService.peer?.getSenders().forEach((sender) => {
+      if (sender.track === screenTrack) {
+        sender.replaceTrack(null);
+      }
+    });
+
+    // Remove screen track but keep camera active
+    setMyStream((prevStream) => {
+      const newStream = new MediaStream(
+        prevStream!.getTracks().filter((t) => t !== screenTrack)
+      );
+      return newStream;
+    });
+
+    console.log("✅ Screen share stopped, camera remains active!");
+  };
+  const startScreenShare = async () => {
+    try {
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+      });
+      const screenTrack = screenStream.getVideoTracks()[0];
+
+      if (PeerService.peer) {
+        PeerService.peer.addTrack(screenTrack, screenStream); // ✅ Add screen stream
+
+        myStream?.getTracks().forEach((track) => {
+          PeerService.peer!.addTrack(track, myStream!); // ✅ Keep camera active
+        });
+      }
+
+      setMyStream(new MediaStream([...myStream!.getTracks(), screenTrack])); // ✅ Merge both streams
+
+      socket?.emit("share-screen", { room: props.roomId });
+
+      screenTrack.onended = () => {
+        stopScreenShare(screenTrack);
+      };
+
+      console.log("✅ Screen sharing started while keeping camera active!");
+    } catch (error) {
+      console.error("Error starting screen share:", error);
+    }
+  };
+  useEffect(() => {
+    sendRemoteStream();
+  }, []);
   return (
     <div className="h-[100%] overflow-hidden ">
       <Modal
@@ -153,14 +239,38 @@ export default function VideoRoom(props: propType) {
         <Flex
           justify="around"
           gap="3xl"
-          className="border-2 border-myprimary rounded-md p-2"
+          className="border-2 border-myprimary rounded-md p-2 col-span-1 z-10 bg-myprimary"
         >
-          <VideoWindow stream={myStream as MediaStream} name="Samual Halder" />
-          <VideoWindow stream={remoteStream} name="User 1" />
-          <Break color="#025AE0" />
-          <Button onClick={sendRemoteStream}>📹</Button>
+          <VideoWindow
+            stream={myStream as MediaStream}
+            name="Samual Halder"
+            audio={false}
+            video={true}
+          />
+          {remoteCameraStream && (
+            <VideoWindow
+              stream={remoteCameraStream}
+              name="User 1"
+              audio={audioPermission}
+              video={cameraPermission}
+            />
+          )}
+          <div className=" flex  gap-3">
+            <Button onClick={sendRemoteStream} variant="outline">
+              Share Video
+            </Button>
+            <Button onClick={startScreenShare} variant="outline">
+              Share Screen
+            </Button>
+          </div>
         </Flex>
-        <Flex>dfsaljf</Flex>
+        <Flex className="col-span-2" justify="start">
+          <VideoWindow
+            stream={remoteScreenStream}
+            audio={false}
+            video={screenPermission}
+          />
+        </Flex>
       </div>
     </div>
   );

@@ -29,7 +29,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="w-[95%] h-[60px] fixed top-4 bg-myprimary text-white self-center rounded-md flex items-center px-3 justify-between">
+      <div className="w-[95%] h-[60px] fixed top-4 bg-myprimary text-white self-center rounded-md flex items-center px-3 justify-between z-50">
         <Title />
         <SearchBar />
         <div className="flex gap-4">

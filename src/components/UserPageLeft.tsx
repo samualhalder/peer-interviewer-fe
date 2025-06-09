@@ -17,24 +17,13 @@ import {
   isSentService,
   sendService,
   unsendService,
-  isAccepted as isAcceptedService,
 } from "@/services/interviewRequest.service";
-import { createRoom } from "@/utils/createRoom";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import { useRouter } from "next/navigation";
-import { useSocket } from "@/context/SocketContext";
-import { createChatId } from "@/utils/createChatId";
-import PeerService from "@/services/peer.service";
+import StartInterview from "./StartInterview";
 
 export default function UserPageLeft() {
   const to = useContext(UserContext);
-  const socket = useSocket();
-  const { user } = useSelector((state: RootState) => state.user);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isSent, setIsSent] = useState(false);
-  const [isAccepted, setIsAccepted] = useState(false);
-  const router = useRouter();
   useEffect(() => {
     const checkFollowing = async (id: string) => {
       const res = await isFollowingService(id);
@@ -44,20 +33,11 @@ export default function UserPageLeft() {
       const res = await isSentService(id);
       setIsSent(res);
     };
-    const checkIsAccepted = async (id: string) => {
-      const res = await isAcceptedService(id);
-      setIsAccepted(res);
-    };
+
     if (to?.id) checkFollowing(to?.id);
     if (to?.id) checkSend(to.id);
-    if (to?.id) checkIsAccepted(to.id);
   }, [to?.id]);
-  const handleStartInterview = async () => {
-    const room = createChatId(to?.id as string, user?.id as string);
-    const offer = await PeerService.getOffer();
-    socket?.emit("start-interview", { room, offer });
-    router.push(`/interview-room/${room}`);
-  };
+
   return (
     <div className="md:col-span-1 rounded-md md:h-[100%] bg-gradient-to-br from-myprimary  to-mysecondary">
       <Flex gap="sm" className="py-5 px-2">
@@ -128,14 +108,7 @@ export default function UserPageLeft() {
               Remove Request For Interview
             </Button>
           )}
-          {isAccepted && (
-            <Button
-              className="w-full bg-green-500"
-              onClick={handleStartInterview}
-            >
-              Start The Interview
-            </Button>
-          )}
+          <StartInterview />
         </Flex>
       </Flex>
     </div>
