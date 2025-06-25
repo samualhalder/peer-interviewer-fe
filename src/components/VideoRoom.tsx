@@ -16,9 +16,8 @@ export default function VideoRoom(props: propType) {
   const router = useRouter();
 
   const [showWarning, setShowWarning] = useState(false);
-  const [myStream, setMyStream] = useState<MediaStream | null>();
-  const [remoteStream, setRemoteStream] = useState<any>(null);
-  const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
+  const [myStream, setMyStream] = useState<MediaStream | null>(null);
+  const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null); // for screen share
   const [remoteCameraStream, setRemoteCameraStream] =
     useState<MediaStream | null>(null);
   const [remoteScreenStream, setRemoteScreenStream] =
@@ -50,37 +49,14 @@ export default function VideoRoom(props: propType) {
 
   const handleOtherUserAcceptedCall = useCallback(
     async (data: { room: string; answer: RTCSessionDescription }) => {
-      console.log("call-acc", data.answer);
-      await PeerService.setLocalDescription(data.answer);
+      await PeerService.setLocalDescription(data.answer); // actually remote desctiption
       sendRemoteStream(); // Only this call
     },
     [sendRemoteStream]
   );
+  // ----------------- negosiation-------------------
 
-  const handleNegosiationNeed = useCallback(
-    async (data: { offer: RTCSessionDescription }) => {
-      console.log("nego-need", data.offer);
-
-      const answer = await PeerService.getAnswer(data.offer);
-      socket?.emit("nego-done", { room: props.roomId, answer });
-    },
-    [socket, props.roomId]
-  );
-  const handleNegosiationDone = useCallback(
-    async (data: { answer: RTCSessionDescription }) => {
-      console.log("nego-done", data.answer);
-
-      await PeerService.setLocalDescription(data.answer);
-    },
-    []
-  );
-  const handleNegosiationNeeded = useCallback(async () => {
-    console.log("peer-nego-need");
-
-    const offer = await PeerService.getOffer();
-    socket?.emit("nego-needed", { offer, room: props.roomId });
-  }, []);
-
+  // #0 : peer connection will notify when we start the negosiation
   useEffect(() => {
     PeerService.peer?.addEventListener(
       "negotiationneeded",
@@ -94,7 +70,31 @@ export default function VideoRoom(props: propType) {
     };
   }, [socket, props.roomId]);
 
-  const handleTrack = async (ev) => {
+  // #1. first step of negosiation user create offer and send for other user
+  const handleNegosiationNeeded = useCallback(async () => {
+    const offer = await PeerService.getOffer();
+    socket?.emit("nego-needed", { offer, room: props.roomId });
+  }, []);
+
+  // #2: here the user get  the offer and create ans and send to the first user
+  const handleNegosiationNeed = useCallback(
+    async (data: { offer: RTCSessionDescription }) => {
+      const answer = await PeerService.getAnswer(data.offer);
+      socket?.emit("nego-done", { room: props.roomId, answer });
+    },
+    [socket, props.roomId]
+  );
+  // #3: now first user accept that answer and complete the negosiation cycle
+  const handleNegosiationDone = useCallback(
+    async (data: { answer: RTCSessionDescription }) => {
+      console.log("nego-done", data.answer);
+
+      await PeerService.setLocalDescription(data.answer);
+    },
+    []
+  );
+
+  const handleTrack = async (ev: any) => {
     const remoteStream = ev.streams[0];
 
     const cameraTrack = remoteStream.getVideoTracks()[0]; // First video track is camera
@@ -105,9 +105,11 @@ export default function VideoRoom(props: propType) {
 
     setRemoteCameraStream(cameraStream); // Store only camera feed
     setRemoteScreenStream(screenStream); // Store only screen share
-
-    console.log("🔹 Remote Camera & Screen Streams Updated");
   };
+
+  //------------------- ice-candidate----------------------------
+
+  //#0: need ice-candidate stablishment to shate the video shareign
   const handleIceCandidate = (event: any) => {
     if (event.candidate) {
       socket?.emit("ice-candidate", {
@@ -116,6 +118,13 @@ export default function VideoRoom(props: propType) {
       });
     }
   };
+
+  //#1: other user adding that ice-candidate
+  const handleAddIceCandidate = useCallback((data: any) => {
+    if (data.candidate) {
+      PeerService.peer?.addIceCandidate(new RTCIceCandidate(data.candidate));
+    }
+  }, []);
 
   useEffect(() => {
     PeerService.peer?.addEventListener("track", handleTrack);
@@ -126,6 +135,27 @@ export default function VideoRoom(props: propType) {
     };
   }, []);
 
+  //---------------video audio staritng and permissions-------------
+
+  const handleScreenSharing = useCallback((data: any) => {
+    const recordedBlob = new Blob([data.videoBlob], { type: "video/webm" });
+    const videoUrl = URL.createObjectURL(recordedBlob);
+
+    setRecordedVideoUrl(videoUrl); // ✅ Update state instead of manipulating DOM directly
+  }, []);
+
+  const handleAudioPermission = useCallback(() => {
+    setAudioPermission(true);
+  }, []);
+  const handleVideoPermission = useCallback(() => {
+    setCameraPermission(true);
+  }, []);
+  const handleScreenShareingPermission = useCallback(() => {
+    console.log("here screen", screenPermission);
+
+    setScreenPermission((pre) => !pre);
+  }, []);
+
   useEffect(() => {
     socket?.on(`declined-${props.roomId}`, () => {
       setShowWarning(true);
@@ -133,39 +163,23 @@ export default function VideoRoom(props: propType) {
     socket?.on(`call-accepted-${props.roomId}`, handleOtherUserAcceptedCall);
     socket?.on(`nego-need-${props.roomId}`, handleNegosiationNeed);
     socket?.on(`nego-done-${props.roomId}`, handleNegosiationDone);
-    socket?.on(`ice-candidate-${props.roomId}`, (data) => {
-      if (data.candidate) {
-        PeerService.peer?.addIceCandidate(new RTCIceCandidate(data.candidate));
-      }
-    });
-    socket?.on(`screen-recording-${props.roomId}`, (data) => {
-      const recordedBlob = new Blob([data.videoBlob], { type: "video/webm" });
-      const videoUrl = URL.createObjectURL(recordedBlob);
+    socket?.on(`ice-candidate-${props.roomId}`, handleAddIceCandidate);
 
-      setRecordedVideoUrl(videoUrl); // ✅ Update state instead of manipulating DOM directly
-    });
-    socket?.on(`audio-${props.roomId}`, () => {
-      setAudioPermission(true);
-    });
-    socket?.on(`video-${props.roomId}`, () => {
-      setCameraPermission(true);
-    });
-    socket?.on(`screen-${props.roomId}`, () => {
-      console.log("here screen", screenPermission);
-
-      setScreenPermission((pre) => !pre);
-    });
+    socket?.on(`screen-recording-${props.roomId}`, handleScreenSharing);
+    socket?.on(`audio-${props.roomId}`, handleAudioPermission);
+    socket?.on(`video-${props.roomId}`, handleVideoPermission);
+    socket?.on(`screen-${props.roomId}`, handleScreenShareingPermission);
 
     return () => {
       socket?.off(`declined-${props.roomId}`);
       socket?.off(`call-accepted-${props.roomId}`);
       socket?.off(`nego-need-${props.roomId}`, handleNegosiationNeed);
       socket?.off(`nego-done-${props.roomId}`, handleNegosiationDone);
-      socket?.off(`ice-candidate-${props.roomId}`);
-      socket?.off(`screen-recording-${props.roomId}`);
-      socket?.off(`audio-${props.roomId}`);
-      socket?.off(`video-${props.roomId}`);
-      socket?.off(`screen-${props.roomId}`);
+      socket?.off(`ice-candidate-${props.roomId}`, handleAddIceCandidate);
+      socket?.off(`screen-recording-${props.roomId}`, handleScreenSharing);
+      socket?.off(`audio-${props.roomId}`, handleAudioPermission);
+      socket?.off(`video-${props.roomId}`, handleVideoPermission);
+      socket?.off(`screen-${props.roomId}`, handleScreenShareingPermission);
     };
   }, [
     props.roomId,
@@ -224,6 +238,7 @@ export default function VideoRoom(props: propType) {
   useEffect(() => {
     sendRemoteStream();
   }, []);
+
   return (
     <div className="h-[100%] overflow-hidden ">
       <Modal
@@ -247,14 +262,14 @@ export default function VideoRoom(props: propType) {
             audio={false}
             video={true}
           />
-          {remoteCameraStream && (
-            <VideoWindow
-              stream={remoteCameraStream}
-              name="User 1"
-              audio={audioPermission}
-              video={cameraPermission}
-            />
-          )}
+
+          <VideoWindow
+            stream={remoteCameraStream}
+            name="User 1"
+            audio={audioPermission}
+            video={cameraPermission}
+          />
+
           <div className=" flex  gap-3">
             <Button onClick={sendRemoteStream} variant="outline">
               Share Video

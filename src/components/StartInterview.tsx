@@ -26,8 +26,8 @@ export default function StartInterview() {
   const router = useRouter();
   const handleInterviewRequest = (data: any) => {
     const { room, offer } = data;
-    setRemoteDescription(offer);
     if (room == currentRoom) {
+      setRemoteDescription(offer);
       setShowRequestModal(true);
     }
   };
