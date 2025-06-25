@@ -110,14 +110,17 @@ export default function VideoRoom(props: propType) {
   //------------------- ice-candidate----------------------------
 
   //#0: need ice-candidate stablishment to shate the video shareign
-  const handleIceCandidate = (event: any) => {
-    if (event.candidate) {
-      socket?.emit("ice-candidate", {
-        room: props.roomId, // Ensure the right room is targeted
-        candidate: event.candidate,
-      });
-    }
-  };
+  const handleIceCandidate = useCallback(
+    (event: any) => {
+      if (event.candidate) {
+        socket?.emit("ice-candidate", {
+          room: props.roomId, // Ensure the right room is targeted
+          candidate: event.candidate,
+        });
+      }
+    },
+    [socket, props.roomId]
+  );
 
   //#1: other user adding that ice-candidate
   const handleAddIceCandidate = useCallback((data: any) => {
@@ -151,8 +154,6 @@ export default function VideoRoom(props: propType) {
     setCameraPermission(true);
   }, []);
   const handleScreenShareingPermission = useCallback(() => {
-    console.log("here screen", screenPermission);
-
     setScreenPermission((pre) => !pre);
   }, []);
 
@@ -187,7 +188,14 @@ export default function VideoRoom(props: propType) {
     handleNegosiationNeed,
     handleOtherUserAcceptedCall,
     socket,
+    handleIceCandidate,
+    handleAudioPermission,
+    handleVideoPermission,
+    handleScreenShareingPermission,
+    handleAddIceCandidate,
+    handleScreenSharing,
   ]);
+
   const stopScreenShare = (screenTrack: MediaStreamTrack) => {
     console.log("⛔ Stopping screen share...");
 
