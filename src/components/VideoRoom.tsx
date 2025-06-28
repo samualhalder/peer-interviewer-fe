@@ -1,12 +1,13 @@
 "use client";
 import { useSocket } from "@/context/SocketContext";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Modal from "./ui/Modal";
 import PeerService from "@/services/peer.service";
 import Button from "./ui/Button";
 import VideoWindow from "./common/VideoWindow";
 import Flex from "./ui/Flex";
+import ReactPlayer from "react-player";
 
 interface propType {
   roomId: string;
@@ -25,35 +26,8 @@ export default function VideoRoom(props: propType) {
   const [cameraPermission, setCameraPermission] = useState(false);
   const [audioPermission, setAudioPermission] = useState(false);
   const [screenPermission, setScreenPermission] = useState(false);
-  useEffect(() => {
-    const fetchMyStream = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true,
-      });
-      setMyStream(stream);
-    };
-    fetchMyStream();
-  }, []);
-  const [tracksAdded, setTracksAdded] = useState(false);
+  const screenTrackIds = useRef<Set<string>>(new Set());
 
-  const sendRemoteStream = useCallback(() => {
-    socket?.emit("share-video", { room: props.roomId });
-    if (myStream && PeerService.peer && !tracksAdded) {
-      myStream.getTracks().forEach((track) => {
-        PeerService.peer!.addTrack(track, myStream);
-      });
-      setTracksAdded(true);
-    }
-  }, [myStream, tracksAdded]);
-
-  const handleOtherUserAcceptedCall = useCallback(
-    async (data: { room: string; answer: RTCSessionDescription }) => {
-      await PeerService.setLocalDescription(data.answer); // actually remote desctiption
-      sendRemoteStream(); // Only this call
-    },
-    [sendRemoteStream]
-  );
   // ----------------- negosiation-------------------
 
   // #0 : peer connection will notify when we start the negosiation
@@ -93,19 +67,6 @@ export default function VideoRoom(props: propType) {
     },
     []
   );
-
-  const handleTrack = async (ev: any) => {
-    const remoteStream = ev.streams[0];
-
-    const cameraTrack = remoteStream.getVideoTracks()[0]; // First video track is camera
-    const screenTrack = remoteStream.getVideoTracks()[1]; // Second video track is screen
-
-    const cameraStream = new MediaStream(cameraTrack ? [cameraTrack] : []);
-    const screenStream = new MediaStream(screenTrack ? [screenTrack] : []);
-
-    setRemoteCameraStream(cameraStream); // Store only camera feed
-    setRemoteScreenStream(screenStream); // Store only screen share
-  };
 
   //------------------- ice-candidate----------------------------
 
@@ -156,6 +117,9 @@ export default function VideoRoom(props: propType) {
   const handleScreenShareingPermission = useCallback(() => {
     setScreenPermission((pre) => !pre);
   }, []);
+  const handleSetTrackId = useCallback(({ trackId }: { trackId: string }) => {
+    screenTrackIds.current.add(trackId);
+  }, []);
 
   useEffect(() => {
     socket?.on(`declined-${props.roomId}`, () => {
@@ -170,6 +134,7 @@ export default function VideoRoom(props: propType) {
     socket?.on(`audio-${props.roomId}`, handleAudioPermission);
     socket?.on(`video-${props.roomId}`, handleVideoPermission);
     socket?.on(`screen-${props.roomId}`, handleScreenShareingPermission);
+    socket?.on(`incoming-screen-sharing-${props.roomId}`, handleSetTrackId);
 
     return () => {
       socket?.off(`declined-${props.roomId}`);
@@ -186,7 +151,6 @@ export default function VideoRoom(props: propType) {
     props.roomId,
     handleNegosiationDone,
     handleNegosiationNeed,
-    handleOtherUserAcceptedCall,
     socket,
     handleIceCandidate,
     handleAudioPermission,
@@ -195,6 +159,61 @@ export default function VideoRoom(props: propType) {
     handleAddIceCandidate,
     handleScreenSharing,
   ]);
+
+  //--------------------Video audio screen sharing---------------
+
+  // #1: fetch local users media (camera) and show it to him only
+  useEffect(() => {
+    const fetchMyStream = async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
+      setMyStream(stream);
+    };
+    fetchMyStream();
+  }, []);
+
+  // #2: Sending local users media to other peer
+  const [tracksAdded, setTracksAdded] = useState(false);
+  const sendRemoteStream = useCallback(() => {
+    socket?.emit("share-video", { room: props.roomId });
+    if (myStream && PeerService.peer && !tracksAdded) {
+      myStream.getTracks().forEach((track) => {
+        PeerService.peer!.addTrack(track, myStream);
+      });
+      setTracksAdded(true);
+    }
+  }, [myStream, tracksAdded, socket, props.roomId]);
+
+  const handleOtherUserAcceptedCall = useCallback(
+    async (data: { room: string; answer: RTCSessionDescription }) => {
+      await PeerService.setLocalDescription(data.answer); // actually remote desctiption
+      sendRemoteStream(); // Only this call
+    },
+    [sendRemoteStream]
+  );
+
+  const handleTrack = async (ev: any) => {
+    console.log("handle track is getting tracks");
+
+    // const remoteStream = ev.streams[0];
+
+    // 39f65298-7417-4a47-947a-2cde4df1e830
+    const track = ev.track;
+    console.log("track", track);
+
+    if (track.kind === "video") {
+      const stream = new MediaStream([track]);
+      if (screenTrackIds.current.has(track.id)) {
+        setRemoteScreenStream(stream);
+      } else {
+        setRemoteCameraStream(stream);
+      }
+    }
+  };
+
+  console.log("remoteScreenStream", remoteScreenStream);
 
   const stopScreenShare = (screenTrack: MediaStreamTrack) => {
     console.log("⛔ Stopping screen share...");
@@ -216,21 +235,40 @@ export default function VideoRoom(props: propType) {
     console.log("✅ Screen share stopped, camera remains active!");
   };
   const startScreenShare = async () => {
+    console.log("starting screen sharing");
+
     try {
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
       });
+      const videoStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
       const screenTrack = screenStream.getVideoTracks()[0];
+      console.log("shared trackid", screenTrack.id);
 
-      if (PeerService.peer) {
-        PeerService.peer.addTrack(screenTrack, screenStream); // ✅ Add screen stream
+      socket?.emit("sharing-screen-tracks", {
+        roomId: props.roomId,
+        trackId: screenTrack.id,
+      });
 
-        myStream?.getTracks().forEach((track) => {
-          PeerService.peer!.addTrack(track, myStream!); // ✅ Keep camera active
-        });
-      }
+      screenStream
+        .getTracks()
+        .forEach((track) => PeerService.peer?.addTrack(track, videoStream));
+      videoStream
+        .getTracks()
+        .forEach((tracks) => PeerService.peer?.addTrack(tracks, videoStream));
 
-      setMyStream(new MediaStream([...myStream!.getTracks(), screenTrack])); // ✅ Merge both streams
+      //   if (PeerService.peer) {
+      //     PeerService.peer.addTrack(screenTrack, screenStream); // ✅ Add screen stream
+
+      //     myStream?.getTracks().forEach((track) => {
+      //       PeerService.peer!.addTrack(track, myStream!); // ✅ Keep camera active
+      //     });
+      //   }
+
+      //   setMyStream(new MediaStream([...myStream!.getTracks(), screenTrack])); // ✅ Merge both streams
 
       socket?.emit("share-screen", { room: props.roomId });
 
@@ -246,6 +284,12 @@ export default function VideoRoom(props: propType) {
   useEffect(() => {
     sendRemoteStream();
   }, []);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  useEffect(() => {
+    if (videoRef.current && remoteScreenStream) {
+      videoRef.current.srcObject = remoteScreenStream;
+    }
+  }, [remoteScreenStream]);
 
   return (
     <div className="h-[100%] overflow-hidden ">
@@ -258,7 +302,7 @@ export default function VideoRoom(props: propType) {
           router.back();
         }}
       />
-      <div className="p-2 grid md:grid-cols-3 gap-2 overflow-y-hidden ">
+      <div className="p-2 grid md:grid-cols-4 gap-2 overflow-y-hidden ">
         <Flex
           justify="around"
           gap="3xl"
@@ -287,11 +331,16 @@ export default function VideoRoom(props: propType) {
             </Button>
           </div>
         </Flex>
-        <Flex className="col-span-2" justify="start">
-          <VideoWindow
-            stream={remoteScreenStream}
-            audio={false}
-            video={screenPermission}
+        <Flex
+          className="col-span-3 bg-blue-400 overflow-hidden"
+          justify="start"
+        >
+          <ReactPlayer
+            url={remoteScreenStream as MediaStream}
+            playing={true}
+            height="100%"
+            width="100%"
+            muted={true}
           />
         </Flex>
       </div>
