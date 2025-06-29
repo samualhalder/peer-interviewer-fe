@@ -23,10 +23,12 @@ export default function VideoRoom(props: propType) {
     useState<MediaStream | null>(null);
   const [remoteScreenStream, setRemoteScreenStream] =
     useState<MediaStream | null>(null);
-  const [cameraPermission, setCameraPermission] = useState(false);
-  const [audioPermission, setAudioPermission] = useState(false);
-  const [screenPermission, setScreenPermission] = useState(false);
   const screenTrackIds = useRef<Set<string>>(new Set());
+
+  const [myCameraPermission, setMyCameraPermission] = useState(false);
+  const [peerCameraPermission, setPeerCameraPermission] = useState(false);
+  const [myAudioPermission, setMyAudioPermission] = useState(false);
+  const [peerAudioPermission, setPeerAudioPermission] = useState(false);
 
   // ----------------- negosiation-------------------
 
@@ -108,57 +110,24 @@ export default function VideoRoom(props: propType) {
     setRecordedVideoUrl(videoUrl); // ✅ Update state instead of manipulating DOM directly
   }, []);
 
-  const handleAudioPermission = useCallback(() => {
-    setAudioPermission(true);
+  const handleMyCameraPermission = useCallback(() => {
+    setMyCameraPermission((pre) => !pre);
   }, []);
-  const handleVideoPermission = useCallback(() => {
-    setCameraPermission(true);
+  const handlePeerCameraPermission = useCallback(() => {
+    console.log("hit camera permission");
+
+    setPeerCameraPermission((pre) => !pre);
   }, []);
-  const handleScreenShareingPermission = useCallback(() => {
-    setScreenPermission((pre) => !pre);
+  const handleMyAudioPermission = useCallback(() => {
+    setMyAudioPermission((pre) => !pre);
   }, []);
+  const handlePeerAudioPermission = useCallback(() => {
+    setPeerAudioPermission((pre) => !pre);
+  }, []);
+
   const handleSetTrackId = useCallback(({ trackId }: { trackId: string }) => {
     screenTrackIds.current.add(trackId);
   }, []);
-
-  useEffect(() => {
-    socket?.on(`declined-${props.roomId}`, () => {
-      setShowWarning(true);
-    });
-    socket?.on(`call-accepted-${props.roomId}`, handleOtherUserAcceptedCall);
-    socket?.on(`nego-need-${props.roomId}`, handleNegosiationNeed);
-    socket?.on(`nego-done-${props.roomId}`, handleNegosiationDone);
-    socket?.on(`ice-candidate-${props.roomId}`, handleAddIceCandidate);
-
-    socket?.on(`screen-recording-${props.roomId}`, handleScreenSharing);
-    socket?.on(`audio-${props.roomId}`, handleAudioPermission);
-    socket?.on(`video-${props.roomId}`, handleVideoPermission);
-    socket?.on(`screen-${props.roomId}`, handleScreenShareingPermission);
-    socket?.on(`incoming-screen-sharing-${props.roomId}`, handleSetTrackId);
-
-    return () => {
-      socket?.off(`declined-${props.roomId}`);
-      socket?.off(`call-accepted-${props.roomId}`);
-      socket?.off(`nego-need-${props.roomId}`, handleNegosiationNeed);
-      socket?.off(`nego-done-${props.roomId}`, handleNegosiationDone);
-      socket?.off(`ice-candidate-${props.roomId}`, handleAddIceCandidate);
-      socket?.off(`screen-recording-${props.roomId}`, handleScreenSharing);
-      socket?.off(`audio-${props.roomId}`, handleAudioPermission);
-      socket?.off(`video-${props.roomId}`, handleVideoPermission);
-      socket?.off(`screen-${props.roomId}`, handleScreenShareingPermission);
-    };
-  }, [
-    props.roomId,
-    handleNegosiationDone,
-    handleNegosiationNeed,
-    socket,
-    handleIceCandidate,
-    handleAudioPermission,
-    handleVideoPermission,
-    handleScreenShareingPermission,
-    handleAddIceCandidate,
-    handleScreenSharing,
-  ]);
 
   //--------------------Video audio screen sharing---------------
 
@@ -177,7 +146,8 @@ export default function VideoRoom(props: propType) {
   // #2: Sending local users media to other peer
   const [tracksAdded, setTracksAdded] = useState(false);
   const sendRemoteStream = useCallback(() => {
-    socket?.emit("share-video", { room: props.roomId });
+    socket?.emit("camera-permission", { roomId: props.roomId });
+    setMyCameraPermission((pre) => !pre);
     if (myStream && PeerService.peer && !tracksAdded) {
       myStream.getTracks().forEach((track) => {
         PeerService.peer!.addTrack(track, myStream);
@@ -189,9 +159,8 @@ export default function VideoRoom(props: propType) {
   const handleOtherUserAcceptedCall = useCallback(
     async (data: { room: string; answer: RTCSessionDescription }) => {
       await PeerService.setLocalDescription(data.answer); // actually remote desctiption
-      sendRemoteStream(); // Only this call
     },
-    [sendRemoteStream]
+    []
   );
 
   const handleTrack = async (ev: any) => {
@@ -281,15 +250,58 @@ export default function VideoRoom(props: propType) {
       console.error("Error starting screen share:", error);
     }
   };
-  useEffect(() => {
-    sendRemoteStream();
-  }, []);
+  //   useEffect(() => {
+  //     sendRemoteStream();
+  //   }, []);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   useEffect(() => {
     if (videoRef.current && remoteScreenStream) {
       videoRef.current.srcObject = remoteScreenStream;
     }
   }, [remoteScreenStream]);
+
+  useEffect(() => {
+    socket?.on(`declined-${props.roomId}`, () => {
+      setShowWarning(true);
+    });
+    socket?.on(`call-accepted-${props.roomId}`, handleOtherUserAcceptedCall);
+    socket?.on(`nego-need-${props.roomId}`, handleNegosiationNeed);
+    socket?.on(`nego-done-${props.roomId}`, handleNegosiationDone);
+    socket?.on(`ice-candidate-${props.roomId}`, handleAddIceCandidate);
+
+    socket?.on(`screen-recording-${props.roomId}`, handleScreenSharing);
+    socket?.on(`audio-${props.roomId}`, handlePeerAudioPermission);
+    socket?.on(`camera-permission-${props.roomId}`, handlePeerCameraPermission);
+    socket?.on(`incoming-screen-sharing-${props.roomId}`, handleSetTrackId);
+
+    return () => {
+      socket?.off(`declined-${props.roomId}`);
+      socket?.off(`call-accepted-${props.roomId}`);
+      socket?.off(`nego-need-${props.roomId}`, handleNegosiationNeed);
+      socket?.off(`nego-done-${props.roomId}`, handleNegosiationDone);
+      socket?.off(`ice-candidate-${props.roomId}`, handleAddIceCandidate);
+      socket?.off(`screen-recording-${props.roomId}`, handleScreenSharing);
+      socket?.off(`audio-${props.roomId}`, handlePeerAudioPermission);
+      socket?.off(
+        `camera-permission-${props.roomId}`,
+        handlePeerCameraPermission
+      );
+    };
+  }, [
+    props.roomId,
+    handleNegosiationDone,
+    handleNegosiationNeed,
+    socket,
+    handleIceCandidate,
+    handlePeerAudioPermission,
+    handlePeerCameraPermission,
+    handleAddIceCandidate,
+    handleScreenSharing,
+    handleSetTrackId,
+    handleOtherUserAcceptedCall,
+  ]);
+
+  console.log("peer-camera-per", peerCameraPermission);
 
   return (
     <div className="h-[100%] overflow-hidden ">
@@ -312,19 +324,19 @@ export default function VideoRoom(props: propType) {
             stream={myStream as MediaStream}
             name="Samual Halder"
             audio={false}
-            video={true}
+            video={myCameraPermission}
           />
 
           <VideoWindow
             stream={remoteCameraStream}
             name="User 1"
-            audio={audioPermission}
-            video={cameraPermission}
+            audio={false}
+            video={peerCameraPermission}
           />
 
           <div className=" flex  gap-3">
             <Button onClick={sendRemoteStream} variant="outline">
-              Share Video
+              {!myCameraPermission ? "Share Video" : "Stop Video"}
             </Button>
             <Button onClick={startScreenShare} variant="outline">
               Share Screen
