@@ -1,6 +1,7 @@
 "use client";
 import { useSocket } from "@/context/SocketContext";
 import { useRouter } from "next/navigation";
+
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Modal from "./ui/Modal";
 import PeerService from "@/services/peer.service";
@@ -11,12 +12,19 @@ import ReactPlayer from "react-player";
 import { FiCamera, FiMic, FiMicOff } from "react-icons/fi";
 import { FiCameraOff } from "react-icons/fi";
 import { LuScreenShare } from "react-icons/lu";
+import { useGetUserById } from "@/hooks/useGetUserById";
+import { UserType } from "@/types/entity.types";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 interface propType {
   roomId: string;
+  peerId: string;
 }
 export default function VideoRoom(props: propType) {
   const socket = useSocket();
   const router = useRouter();
+  const peer = useGetUserById(props.peerId);
+  const user = useSelector((state: RootState) => state.user.user);
 
   const [showWarning, setShowWarning] = useState(false);
   const [myStream, setMyStream] = useState<MediaStream | null>(null);
@@ -337,14 +345,14 @@ export default function VideoRoom(props: propType) {
         >
           <VideoWindow
             stream={myStream as MediaStream}
-            name="Samual Halder"
+            name={user?.name}
             audio={myAudioPermission}
             video={myCameraPermission}
           />
 
           <VideoWindow
             stream={remoteCameraStream}
-            name="User 1"
+            name={peer.user?.name || "abc"}
             audio={peerAudioPermission}
             video={peerCameraPermission}
           />

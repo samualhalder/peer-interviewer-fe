@@ -36,7 +36,7 @@ export default function StartInterview() {
       const answer = await PeerService.getAnswer(remoteDescription);
       socket?.emit("call-accepted", { room: currentRoom, answer });
     }
-    router.push(`/interview-room/${currentRoom}`);
+    router.push(`/interview-room/${currentRoom}?peerId=${to?.id}`);
   };
   const onReject = () => {
     setShowRequestModal(false);
@@ -62,7 +62,7 @@ export default function StartInterview() {
     const room = createChatId(to?.id as string, user?.id as string);
     const offer = await PeerService.getOffer();
     socket?.emit("start-interview", { room, offer });
-    router.push(`/interview-room/${room}`);
+    router.push(`/interview-room/${room}?peerId=${to?.id}`);
   };
 
   return (
