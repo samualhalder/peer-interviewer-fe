@@ -1,6 +1,7 @@
 import React from "react";
 import ReactPlayer from "react-player";
 import Loader from "../ui/Loader";
+import { FiMic, FiMicOff } from "react-icons/fi";
 
 export default function VideoWindow({
   name,
@@ -40,6 +41,9 @@ export default function VideoWindow({
       )}
       <div className="absolute bottom-1 left-1 bg-mysecondary text-white px-2 py-1 opacity-70 rounded-lg text-sm">
         {name}
+      </div>
+      <div className="absolute bottom-1 right-1 bg-mysecondary text-white px-2 py-1 opacity-70 rounded-lg text-sm">
+        {audio ? <FiMic></FiMic> : <FiMicOff />}
       </div>
     </div>
   );

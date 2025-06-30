@@ -8,7 +8,9 @@ import Button from "./ui/Button";
 import VideoWindow from "./common/VideoWindow";
 import Flex from "./ui/Flex";
 import ReactPlayer from "react-player";
-
+import { FiCamera, FiMic, FiMicOff } from "react-icons/fi";
+import { FiCameraOff } from "react-icons/fi";
+import { LuScreenShare } from "react-icons/lu";
 interface propType {
   roomId: string;
 }
@@ -110,21 +112,12 @@ export default function VideoRoom(props: propType) {
     setRecordedVideoUrl(videoUrl); // ✅ Update state instead of manipulating DOM directly
   }, []);
 
-  const handleMyCameraPermission = useCallback(() => {
-    setMyCameraPermission((pre) => !pre);
-  }, []);
   const handlePeerCameraPermission = useCallback(() => {
-    console.log("hit camera permission");
-
     setPeerCameraPermission((pre) => !pre);
-  }, []);
-  const handleMyAudioPermission = useCallback(() => {
-    setMyAudioPermission((pre) => !pre);
   }, []);
   const handlePeerAudioPermission = useCallback(() => {
     setPeerAudioPermission((pre) => !pre);
   }, []);
-
   const handleSetTrackId = useCallback(({ trackId }: { trackId: string }) => {
     screenTrackIds.current.add(trackId);
   }, []);
@@ -133,28 +126,46 @@ export default function VideoRoom(props: propType) {
 
   // #1: fetch local users media (camera) and show it to him only
   useEffect(() => {
-    const fetchMyStream = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true,
-      });
-      setMyStream(stream);
-    };
-    fetchMyStream();
+    //   fetchMyStream();
   }, []);
+  const fetchMyStream = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: true,
+    });
+    setMyStream(stream);
+    return stream;
+  };
+  const stopMyStream = () => {
+    setMyStream(null);
+  };
 
   // #2: Sending local users media to other peer
-  const [tracksAdded, setTracksAdded] = useState(false);
-  const sendRemoteStream = useCallback(() => {
+
+  const sendRemoteStream = useCallback(async () => {
+    const stream = await fetchMyStream();
     socket?.emit("camera-permission", { roomId: props.roomId });
     setMyCameraPermission((pre) => !pre);
-    if (myStream && PeerService.peer && !tracksAdded) {
-      myStream.getTracks().forEach((track) => {
-        PeerService.peer!.addTrack(track, myStream);
+
+    setTimeout(() => {
+      if (stream && PeerService.peer) {
+        stream.getTracks().forEach((track) => {
+          PeerService.peer!.addTrack(track, stream);
+        });
+      }
+    }, 1000);
+  }, [myStream, socket, props.roomId]);
+
+  const sendAudio = useCallback(async () => {
+    socket?.emit("audio-permission", { roomId: props.roomId });
+    setMyAudioPermission((pre) => !pre);
+    const stream = await fetchMyStream();
+    if (stream && PeerService.peer) {
+      stream.getTracks().forEach((track) => {
+        PeerService.peer!.addTrack(track, stream);
       });
-      setTracksAdded(true);
     }
-  }, [myStream, tracksAdded, socket, props.roomId]);
+  }, [myStream, socket, props.roomId]);
 
   const handleOtherUserAcceptedCall = useCallback(
     async (data: { room: string; answer: RTCSessionDescription }) => {
@@ -186,7 +197,8 @@ export default function VideoRoom(props: propType) {
 
   const stopScreenShare = (screenTrack: MediaStreamTrack) => {
     console.log("⛔ Stopping screen share...");
-
+    screenTrackIds.current.clear();
+    setRemoteScreenStream(null);
     PeerService.peer?.getSenders().forEach((sender) => {
       if (sender.track === screenTrack) {
         sender.replaceTrack(null);
@@ -194,12 +206,12 @@ export default function VideoRoom(props: propType) {
     });
 
     // Remove screen track but keep camera active
-    setMyStream((prevStream) => {
-      const newStream = new MediaStream(
-        prevStream!.getTracks().filter((t) => t !== screenTrack)
-      );
-      return newStream;
-    });
+    // setMyStream((prevStream) => {
+    //   const newStream = new MediaStream(
+    //     prevStream!.getTracks().filter((t) => t !== screenTrack)
+    //   );
+    //   return newStream;
+    // });
 
     console.log("✅ Screen share stopped, camera remains active!");
   };
@@ -270,7 +282,7 @@ export default function VideoRoom(props: propType) {
     socket?.on(`ice-candidate-${props.roomId}`, handleAddIceCandidate);
 
     socket?.on(`screen-recording-${props.roomId}`, handleScreenSharing);
-    socket?.on(`audio-${props.roomId}`, handlePeerAudioPermission);
+    socket?.on(`audio-permission-${props.roomId}`, handlePeerAudioPermission);
     socket?.on(`camera-permission-${props.roomId}`, handlePeerCameraPermission);
     socket?.on(`incoming-screen-sharing-${props.roomId}`, handleSetTrackId);
 
@@ -281,7 +293,10 @@ export default function VideoRoom(props: propType) {
       socket?.off(`nego-done-${props.roomId}`, handleNegosiationDone);
       socket?.off(`ice-candidate-${props.roomId}`, handleAddIceCandidate);
       socket?.off(`screen-recording-${props.roomId}`, handleScreenSharing);
-      socket?.off(`audio-${props.roomId}`, handlePeerAudioPermission);
+      socket?.off(
+        `audio-permission-${props.roomId}`,
+        handlePeerAudioPermission
+      );
       socket?.off(
         `camera-permission-${props.roomId}`,
         handlePeerCameraPermission
@@ -323,23 +338,26 @@ export default function VideoRoom(props: propType) {
           <VideoWindow
             stream={myStream as MediaStream}
             name="Samual Halder"
-            audio={false}
+            audio={myAudioPermission}
             video={myCameraPermission}
           />
 
           <VideoWindow
             stream={remoteCameraStream}
             name="User 1"
-            audio={false}
+            audio={peerAudioPermission}
             video={peerCameraPermission}
           />
 
           <div className=" flex  gap-3">
             <Button onClick={sendRemoteStream} variant="outline">
-              {!myCameraPermission ? "Share Video" : "Stop Video"}
+              {!myCameraPermission ? <FiCamera /> : <FiCameraOff />}
+            </Button>
+            <Button onClick={sendAudio} variant="outline">
+              {!myAudioPermission ? <FiMic /> : <FiMicOff />}
             </Button>
             <Button onClick={startScreenShare} variant="outline">
-              Share Screen
+              <LuScreenShare />
             </Button>
           </div>
         </Flex>
