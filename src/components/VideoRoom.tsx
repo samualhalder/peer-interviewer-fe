@@ -17,6 +17,7 @@ import { UserType } from "@/types/entity.types";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import Chat from "./common/Chat";
+import EndMetting from "./common/EndMetting";
 interface propType {
   roomId: string;
   peerId: string;
@@ -146,7 +147,10 @@ export default function VideoRoom(props: propType) {
     return stream;
   };
   const stopMyStream = () => {
-    setMyStream(null);
+    if (myStream) {
+      myStream.getTracks().forEach((track) => track.stop());
+      setMyStream(null);
+    }
   };
 
   // #2: Sending local users media to other peer
@@ -368,6 +372,7 @@ export default function VideoRoom(props: propType) {
             <Button onClick={startScreenShare} variant="outline">
               <LuScreenShare />
             </Button>
+            <EndMetting roomId={props.roomId} stopMyStream={stopMyStream} />
           </div>
         </Flex>
         <Flex
