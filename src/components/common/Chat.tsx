@@ -1,18 +1,20 @@
 "use client";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ChatInput from "../ChatInput";
 import ChatText from "./ChatText";
-import { UserContext } from "../layouts/UserPageLayout";
 import { ChatType } from "@/types/chat.types";
 import { listChatService } from "@/services/char.service";
 import { createChatId } from "@/utils/createChatId";
 import { useSocket } from "@/context/SocketContext";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { UserType } from "@/types/entity.types";
 
-export default function Chat() {
-  const to = useContext(UserContext);
-  const { user } = useSelector((state: RootState) => state.user);
+type propsType = {
+  to: UserType;
+  user: UserType;
+};
+export default function Chat(props: propsType) {
+  const to = props.to;
+  const user = props.user;
   const [chats, setChats] = useState<ChatType[]>([]);
   const socket = useSocket();
   const chatDivRef = useRef<HTMLDivElement | null>(null);
@@ -61,7 +63,7 @@ export default function Chat() {
         ))}
       </div>
 
-      <ChatInput />
+      <ChatInput to={to} />
     </div>
   );
 }

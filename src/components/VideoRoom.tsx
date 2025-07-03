@@ -16,6 +16,7 @@ import { useGetUserById } from "@/hooks/useGetUserById";
 import { UserType } from "@/types/entity.types";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import Chat from "./common/Chat";
 interface propType {
   roomId: string;
   peerId: string;
@@ -381,6 +382,9 @@ export default function VideoRoom(props: propType) {
             muted={true}
           />
         </Flex>
+      </div>
+      <div className="border-2 border-myprimary p-2 rounded-md">
+        <Chat to={peer.user as UserType} user={user as UserType} />
       </div>
     </div>
   );

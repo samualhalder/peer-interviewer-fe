@@ -10,9 +10,13 @@ import { UserContext } from "./layouts/UserPageLayout";
 import Chat from "./common/Chat";
 import { canChatService } from "@/services/interviewRequest.service";
 import CantChat from "./CantChat";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { UserType } from "@/types/entity.types";
 
 export default function UserPageRight() {
-  const user = useContext(UserContext);
+  const to = useContext(UserContext);
+  const { user } = useSelector((state: RootState) => state.user);
   const [canChat, setcanChat] = useState(false);
   useEffect(() => {
     const checkCanChat = async (id: string) => {
@@ -20,8 +24,8 @@ export default function UserPageRight() {
       setcanChat(res);
     };
 
-    if (user?.id) checkCanChat(user.id);
-  }, [user?.id]);
+    if (to?.id) checkCanChat(to.id);
+  }, [to?.id]);
 
   return (
     <>
@@ -50,10 +54,14 @@ export default function UserPageRight() {
           />
         </Flex>
         <Flex items="start" className="">
-          <ShowSkills skills={user?.skills} />
+          <ShowSkills skills={to?.skills} />
           <Break color="#025AE0" />
         </Flex>
-        {canChat ? <Chat /> : <CantChat />}
+        {canChat ? (
+          <Chat to={to as UserType} user={user as UserType} />
+        ) : (
+          <CantChat />
+        )}
       </Flex>
     </>
   );

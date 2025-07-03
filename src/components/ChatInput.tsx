@@ -1,20 +1,19 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import Flex from "./ui/Flex";
 import { IoSendSharp } from "react-icons/io5";
 
 import Button from "./ui/Button";
 import { sendChatService } from "@/services/char.service";
-import { UserContext } from "./layouts/UserPageLayout";
-import { ChatType } from "@/types/chat.types";
-import useFetchUser from "@/hooks/useFetchUser";
+
 import { createChatId } from "@/utils/createChatId";
 import { UserType } from "@/types/entity.types";
 import { useSocket } from "@/utils/socket";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
-export default function ChatInput() {
+export default function ChatInput({ to }: { to: UserType }) {
   const socket = useSocket();
-  const to = useContext(UserContext);
-  const { user } = useFetchUser();
+  const { user } = useSelector((state: RootState) => state.user);
   const [text, settext] = useState("");
   const chatId = createChatId(to?.id as string, user?.id as string);
   const handleSend = async () => {
