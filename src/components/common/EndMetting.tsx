@@ -4,6 +4,7 @@ import Button from "../ui/Button";
 import Modal from "../ui/Modal";
 import { useSocket } from "@/context/SocketContext";
 import { useRouter } from "next/navigation";
+import { MdOutlinePhone } from "react-icons/md";
 
 export default function EndMetting({
   roomId,
@@ -52,10 +53,12 @@ export default function EndMetting({
         }}
       />
       <Button
-        className="bg-red-500 text-white"
+        className="bg-red-500 text-white text-sm"
         onClick={() => setShowEndMeetingModal((pre) => !pre)}
+        hover="end meeting"
+        size="sm"
       >
-        End Meeting
+        <MdOutlinePhone />
       </Button>
     </>
   );

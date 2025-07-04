@@ -29,18 +29,27 @@ const buttonVariant = cva(
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary" | "outline";
   size?: "sm" | "lg" | "md" | "xl" | "xl2";
+  hover?: string;
 };
 
 export default function Button({
   variant,
   size,
+  hover,
   className,
   ...props
 }: ButtonProps) {
   return (
-    <button
-      {...props}
-      className={cn(buttonVariant({ variant, size }), className)}
-    />
+    <div className="w-full flex justify-center items-center relative group">
+      <button
+        {...props}
+        className={cn(buttonVariant({ variant, size }), className)}
+      />
+      {hover && (
+        <span className=" absolute bottom-10 right-auto whitespace-nowrap bg-gray-400 text-white py-2 px-4 text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+          {hover}
+        </span>
+      )}
+    </div>
   );
 }

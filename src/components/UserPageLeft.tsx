@@ -62,7 +62,7 @@ export default function UserPageLeft() {
           </p>
           {!isFollowing ? (
             <Button
-              className="w-full flex items-center justify-center gap-3"
+              className="w-[100%] flex items-center justify-center gap-3"
               onClick={() => {
                 followService({ followed: to?.id });
                 setIsFollowing(true);

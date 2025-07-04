@@ -9,9 +9,9 @@ import Button from "./ui/Button";
 import VideoWindow from "./common/VideoWindow";
 import Flex from "./ui/Flex";
 import ReactPlayer from "react-player";
-import { FiCamera, FiMic, FiMicOff } from "react-icons/fi";
+import { FiCamera, FiMessageSquare, FiMic, FiMicOff } from "react-icons/fi";
 import { FiCameraOff } from "react-icons/fi";
-import { LuScreenShare } from "react-icons/lu";
+import { LuChartBar, LuScreenShare } from "react-icons/lu";
 import { useGetUserById } from "@/hooks/useGetUserById";
 import { UserType } from "@/types/entity.types";
 import { useSelector } from "react-redux";
@@ -29,6 +29,7 @@ export default function VideoRoom(props: propType) {
   const user = useSelector((state: RootState) => state.user.user);
 
   const [showWarning, setShowWarning] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [myStream, setMyStream] = useState<MediaStream | null>(null);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null); // for screen share
   const [remoteCameraStream, setRemoteCameraStream] =
@@ -329,10 +330,8 @@ export default function VideoRoom(props: propType) {
     handleOtherUserAcceptedCall,
   ]);
 
-  console.log("peer-camera-per", peerCameraPermission);
-
   return (
-    <div className="h-[100%] overflow-hidden ">
+    <div className="">
       <Modal
         isOpen={showWarning}
         title="Other person rejected you interview call"
@@ -342,11 +341,11 @@ export default function VideoRoom(props: propType) {
           router.back();
         }}
       />
-      <div className="p-2 grid md:grid-cols-4 gap-2 overflow-y-hidden ">
+      <div className="h-full  p-2 grid md:grid-cols-4 gap-1 ">
         <Flex
-          justify="around"
+          justify="center"
           gap="3xl"
-          className="border-2 border-myprimary rounded-md p-2 col-span-1 z-10 bg-myprimary"
+          className="h-[90vh] border-2 border-myprimary rounded-md p-2 col-span-1 z-10 bg-myprimary"
         >
           <VideoWindow
             stream={myStream as MediaStream}
@@ -362,21 +361,39 @@ export default function VideoRoom(props: propType) {
             video={peerCameraPermission}
           />
 
-          <div className=" flex  gap-3">
-            <Button onClick={sendRemoteStream} variant="outline">
+          <div className=" flex  gap-2">
+            <Button
+              onClick={sendRemoteStream}
+              variant="outline"
+              hover="camera"
+              size="sm"
+            >
               {!myCameraPermission ? <FiCamera /> : <FiCameraOff />}
             </Button>
-            <Button onClick={sendAudio} variant="outline">
+            <Button onClick={sendAudio} variant="outline" hover="mic">
               {!myAudioPermission ? <FiMic /> : <FiMicOff />}
             </Button>
-            <Button onClick={startScreenShare} variant="outline">
+            <Button
+              onClick={startScreenShare}
+              variant="outline"
+              hover="screen share"
+            >
               <LuScreenShare />
+            </Button>
+            <Button
+              onClick={() => setIsChatOpen((pre) => !pre)}
+              variant="outline"
+              hover="chat"
+            >
+              <FiMessageSquare />
             </Button>
             <EndMetting roomId={props.roomId} stopMyStream={stopMyStream} />
           </div>
         </Flex>
         <Flex
-          className="col-span-3 bg-blue-400 overflow-hidden"
+          className={`${
+            isChatOpen ? "col-span-2" : "col-span-3"
+          } bg-blue-400 overflow-hidden rounded-md`}
           justify="start"
         >
           <ReactPlayer
@@ -387,9 +404,13 @@ export default function VideoRoom(props: propType) {
             muted={true}
           />
         </Flex>
-      </div>
-      <div className="border-2 border-myprimary p-2 rounded-md">
-        <Chat to={peer.user as UserType} user={user as UserType} />
+        <div
+          className={`${
+            isChatOpen ? "block" : " invisible"
+          } border-2 col-span-1 border-myprimary p-2 rounded-md h-[90vh]`}
+        >
+          <Chat to={peer.user as UserType} user={user as UserType} />
+        </div>
       </div>
     </div>
   );

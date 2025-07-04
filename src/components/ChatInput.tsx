@@ -47,22 +47,17 @@ export default function ChatInput({ to }: { to: UserType }) {
     }
   };
   return (
-    <Flex
-      variant="row"
-      justify="start"
-      items="center"
-      className="relative bottom-1"
-    >
+    <div className="relative w-full">
       <textarea
         placeholder="Say Hello........."
-        className=" resize-none w-full p-2 border-2 rounded-md border-gray-400 ring-gray-400 focus:outline-myprimary"
+        className=" resize-none block  w-full p-2 border-2 rounded-md border-gray-400 ring-gray-400 focus:outline-myprimary "
         rows={2}
         onChange={(e) => settext(e.target.value)}
         value={text}
       />
-      <Button className=" absolute bottom-1 right-1" onClick={handleSend}>
+      <Button className="absolute bottom-1 right-1" onClick={handleSend}>
         <IoSendSharp />
       </Button>
-    </Flex>
+    </div>
   );
 }

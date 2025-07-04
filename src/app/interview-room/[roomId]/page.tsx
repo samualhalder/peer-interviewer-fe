@@ -12,8 +12,8 @@ export default function Page({
   const peerId = searchParams.peerId ?? null;
 
   return (
-    <div className="">
-      <VideoRoom roomId={roomId} peerId={peerId} />
+    <div className="h-screen w-full overflow-y-hidden">
+      <VideoRoom roomId={roomId} peerId={peerId as string} />
     </div>
   );
 }

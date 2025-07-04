@@ -30,7 +30,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const noNavbarPaths = ["/signup", "/signin"];
+  const noNavbarPaths = ["/signup", "/signin", "/interview-room/*"];
   const pathname = usePathname();
   return (
     <html lang="en">
@@ -39,7 +39,8 @@ export default function RootLayout({
       >
         <Providers>
           <AuthGuard>
-            {noNavbarPaths.includes(pathname) ? (
+            {noNavbarPaths.includes(pathname) ||
+            pathname.startsWith("/interview-room") ? (
               <div className="h-screen flex justify-center items-center">
                 {children}
                 <Toaster />

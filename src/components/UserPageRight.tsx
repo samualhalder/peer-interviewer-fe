@@ -58,7 +58,9 @@ export default function UserPageRight() {
           <Break color="#025AE0" />
         </Flex>
         {canChat ? (
-          <Chat to={to as UserType} user={user as UserType} />
+          <div className="h-[500px]">
+            <Chat to={to as UserType} user={user as UserType} />
+          </div>
         ) : (
           <CantChat />
         )}

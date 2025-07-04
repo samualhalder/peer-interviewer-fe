@@ -2,7 +2,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../utils/cn";
 import React from "react";
 
-const flexVariant = cva("w-[100%] flex shrink-0", {
+const flexVariant = cva("w-[100%]  flex shrink-0", {
   variants: {
     variant: {
       col: "flex-col",
