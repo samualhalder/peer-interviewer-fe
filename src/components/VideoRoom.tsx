@@ -331,7 +331,7 @@ export default function VideoRoom(props: propType) {
   ]);
 
   return (
-    <div className="">
+    <div className="h-full w-full ">
       <Modal
         isOpen={showWarning}
         title="Other person rejected you interview call"
@@ -341,11 +341,11 @@ export default function VideoRoom(props: propType) {
           router.back();
         }}
       />
-      <div className="h-full  p-2 grid md:grid-cols-4 gap-1 ">
+      <div className="h-[100vh] p-2 grid md:grid-cols-4 gap-1 ">
         <Flex
           justify="center"
           gap="3xl"
-          className="h-[90vh] border-2 border-myprimary rounded-md p-2 col-span-1 z-10 bg-myprimary"
+          className="h-[98vh] border-2 border-myprimary rounded-md p-2 col-span-1 z-10 bg-myprimary"
         >
           <VideoWindow
             stream={myStream as MediaStream}
@@ -365,13 +365,17 @@ export default function VideoRoom(props: propType) {
             <Button
               onClick={sendRemoteStream}
               variant="outline"
-              hover="camera"
+              hover={myCameraPermission ? "off camera" : "on camera"}
               size="sm"
             >
-              {!myCameraPermission ? <FiCamera /> : <FiCameraOff />}
+              {myCameraPermission ? <FiCamera /> : <FiCameraOff />}
             </Button>
-            <Button onClick={sendAudio} variant="outline" hover="mic">
-              {!myAudioPermission ? <FiMic /> : <FiMicOff />}
+            <Button
+              onClick={sendAudio}
+              variant="outline"
+              hover={myAudioPermission ? "off mic" : "on mic"}
+            >
+              {myAudioPermission ? <FiMic /> : <FiMicOff />}
             </Button>
             <Button
               onClick={startScreenShare}
@@ -407,7 +411,7 @@ export default function VideoRoom(props: propType) {
         <div
           className={`${
             isChatOpen ? "block" : " invisible"
-          } border-2 col-span-1 border-myprimary p-2 rounded-md h-[90vh]`}
+          } border-2 col-span-1 border-myprimary p-2 rounded-md h-[98vh]`}
         >
           <Chat to={peer.user as UserType} user={user as UserType} />
         </div>

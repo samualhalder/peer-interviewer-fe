@@ -53,6 +53,7 @@ export default function StartInterview() {
   useEffect(() => {
     const checkIsAccepted = async (id: string) => {
       const res = await isAcceptedService(id);
+
       setIsAccepted(res);
     };
 

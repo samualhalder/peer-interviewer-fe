@@ -37,7 +37,7 @@ export default function EndMetting({
   return (
     <>
       <Modal
-        title="End Meeting"
+        title="End Meeting ?"
         descripton="are you sure,you wan't to end this meeting"
         isOpen={showEndMeetingModal}
         onAccept={handleOnAccept}

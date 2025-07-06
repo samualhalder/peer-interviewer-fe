@@ -136,6 +136,7 @@ const isAccepted = async (id: string) => {
     const result = await httpService.get<ResponseReturnType>(
       `/interview-requests/is-accepted/${id}`
     );
+
     if (result.data.result.length > 0) {
       return true;
     }
