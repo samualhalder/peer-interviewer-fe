@@ -101,7 +101,7 @@ function SearchBar() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
 
-    window.location.href = `/users/${encodeURIComponent(searchTerm)}`;
+    window.location.href = `/users/${encodeURIComponent(searchTerm) || "_"}`;
   };
   return (
     <form
@@ -120,6 +120,7 @@ function SearchBar() {
       <IoIosSearch
         size={30}
         className=" relative bg-white text-primary right-12 cursor-pointer"
+        onClick={(e) => handleSearch(e)}
       />
     </form>
   );

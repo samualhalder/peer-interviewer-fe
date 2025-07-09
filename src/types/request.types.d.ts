@@ -4,7 +4,7 @@ export interface InterviewRequestsType {
   id: string;
   from: string;
   to: string;
-  status: boolean;
+  status: string;
   seen: boolean;
   createdAt: Date;
   fromuser: UserType; // Assuming User is a defined type

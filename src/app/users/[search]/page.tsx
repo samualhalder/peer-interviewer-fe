@@ -8,6 +8,7 @@ export default async function Page({
   params: Promise<{ search: string }>;
 }) {
   const { search } = await params;
+  
 
   return (
     <div>

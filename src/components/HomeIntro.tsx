@@ -12,7 +12,7 @@ export default function HomeIntro() {
     <div className="">
       <div>
         <h1
-          className={`text-myprimary text-6xl font-semibold ${montserratFont.className}`}
+          className={`text-white text-6xl font-semibold ${montserratFont.className}`}
         >
           Peer Interviewer
         </h1>

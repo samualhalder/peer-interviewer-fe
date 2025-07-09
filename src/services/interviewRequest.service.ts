@@ -155,6 +155,18 @@ const canChatService = async (id: string) => {
     return false;
   }
 };
+const intStatsService = async (id: string) => {
+  try {
+    const result = await httpService.get<ResponseReturnType>(
+      `/interview-requests/int-stats/${id}`
+    );
+    console.log("res", id, result);
+
+    return result.data.result;
+  } catch (error) {
+    return false;
+  }
+};
 export {
   isSentService,
   sendService,
@@ -166,4 +178,5 @@ export {
   checkNewRequests,
   isAccepted,
   canChatService,
+  intStatsService,
 };
