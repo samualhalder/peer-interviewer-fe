@@ -11,7 +11,7 @@ import Flex from "./ui/Flex";
 import ReactPlayer from "react-player";
 import { FiCamera, FiMessageSquare, FiMic, FiMicOff } from "react-icons/fi";
 import { FiCameraOff } from "react-icons/fi";
-import { LuChartBar, LuScreenShare } from "react-icons/lu";
+import {  LuScreenShare } from "react-icons/lu";
 import { useGetUserById } from "@/hooks/useGetUserById";
 import { UserType } from "@/types/entity.types";
 import { useSelector } from "react-redux";

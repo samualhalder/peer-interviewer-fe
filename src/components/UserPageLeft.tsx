@@ -7,7 +7,7 @@ import { UserContext } from "./layouts/UserPageLayout";
 import Button from "./ui/Button";
 import { GoOrganization, GoLocation, GoHeart } from "react-icons/go";
 import { IoSendSharp, IoHeartDislike, IoHeart } from "react-icons/io5";
-import { MdCancelScheduleSend } from "react-icons/md";
+import { MdCancel, MdCancelScheduleSend } from "react-icons/md";
 import {
   followService,
   isFollowingService,
@@ -23,7 +23,7 @@ import StartInterview from "./StartInterview";
 export default function UserPageLeft() {
   const to = useContext(UserContext);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [isSent, setIsSent] = useState(false);
+  const [isSent, setIsSent] = useState({ flag: false, status: "" });
   useEffect(() => {
     const checkFollowing = async (id: string) => {
       const res = await isFollowingService(id);
@@ -31,7 +31,7 @@ export default function UserPageLeft() {
     };
     const checkSend = async (id: string) => {
       const res = await isSentService(id);
-      setIsSent(res);
+      setIsSent({ flag: res?.flag, status: res?.status });
     };
 
     if (to?.id) checkFollowing(to?.id);
@@ -83,17 +83,29 @@ export default function UserPageLeft() {
               Unfollow
             </Button>
           )}
-          {!isSent ? (
+          {!isSent.flag ? (
             <Button
               variant="outline"
               className="w-full flex items-center justify-center gap-3"
               onClick={() => {
                 sendService({ to: to?.id });
-                setIsSent(true);
+                setIsSent({ flag: true, status: "pending" });
               }}
             >
               <IoSendSharp fontSize={25} />
-              Sent Request For Interview
+              Send Request For Interview
+            </Button>
+          ) : isSent.status == "pending" ? (
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-center gap-3"
+              onClick={() => {
+                unsendService({ to: to?.id });
+                setIsSent({ flag: false, status: "" });
+              }}
+            >
+              <MdCancelScheduleSend fontSize={25} color="red" />
+              Remove Request For Interview
             </Button>
           ) : (
             <Button
@@ -101,11 +113,12 @@ export default function UserPageLeft() {
               className="w-full flex items-center justify-center gap-3"
               onClick={() => {
                 unsendService({ to: to?.id });
-                setIsSent(false);
+                setIsSent({ flag: false, status: "" });
               }}
+              hover="Interview request is accepted,clicking on this will cancel the interview"
             >
-              <MdCancelScheduleSend fontSize={25} color="red" />
-              Remove Request For Interview
+              <MdCancel fontSize={25} color="red" />
+              Cancel Interview
             </Button>
           )}
           <StartInterview />

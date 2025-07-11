@@ -5,6 +5,7 @@ import Modal from "../ui/Modal";
 import { useSocket } from "@/context/SocketContext";
 import { useRouter } from "next/navigation";
 import { MdOutlinePhone } from "react-icons/md";
+import { endInterviewService } from "@/services/interviewRequest.service";
 
 export default function EndMetting({
   roomId,
@@ -18,7 +19,8 @@ export default function EndMetting({
     useState(false);
   const socket = useSocket();
   const router = useRouter();
-  const handleOnAccept = () => {
+  const handleOnAccept = async () => {
+    await endInterviewService(roomId);
     socket?.emit("end-meeting", roomId);
     stopMyStream();
     router.back();

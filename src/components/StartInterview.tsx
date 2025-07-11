@@ -13,18 +13,26 @@ import { isAccepted as isAcceptedService } from "@/services/interviewRequest.ser
 import Button from "./ui/Button";
 import Modal from "./ui/Modal";
 import { UserContext } from "./layouts/UserPageLayout";
+import { createRoomId } from "@/utils/createRoom";
 
 export default function StartInterview() {
   const to = useContext(UserContext);
   const { user } = useSelector((state: RootState) => state.user);
   const socket = useSocket();
   const [isAccepted, setIsAccepted] = useState(false);
+  const router = useRouter();
+  const [currentRoom, setCurrentRoom] = useState(null);
   const [showRequestModal, setShowRequestModal] = useState(false);
-  const currentRoom = createChatId(to?.id as string, user?.id as string);
   const [remoteDescription, setRemoteDescription] =
     useState<RTCSessionDescription | null>(null);
-  const router = useRouter();
-  const handleInterviewRequest = (data: any) => {
+  useEffect(() => {
+    const fetchRoomId = async () => {
+      const res = await createRoomId(user?.id as string, to?.id as string);
+      setCurrentRoom(res);
+    };
+    fetchRoomId();
+  }, [user, to]);
+  const handleInterviewRequest = async (data: any) => {
     const { room, offer } = data;
     if (room == currentRoom) {
       setRemoteDescription(offer);
@@ -60,7 +68,7 @@ export default function StartInterview() {
     if (to?.id) checkIsAccepted(to.id);
   }, [to?.id]);
   const handleStartInterview = async () => {
-    const room = createChatId(to?.id as string, user?.id as string);
+    const room = await createRoomId(to?.id as string, user?.id as string);
     const offer = await PeerService.getOffer();
     socket?.emit("start-interview", { room, offer });
     router.push(`/interview-room/${room}?peerId=${to?.id}`);

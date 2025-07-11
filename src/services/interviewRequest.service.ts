@@ -167,6 +167,33 @@ const intStatsService = async (id: string) => {
     return false;
   }
 };
+const getInterviewIdService = async (from: string, to: string) => {
+  try {
+    const result = await httpService.get<ResponseReturnType>(
+      `/interview-requests/get-int-id?from=${from}&to=${to}`
+    );
+
+    return result.data.result;
+  } catch (error) {
+    return false;
+  }
+};
+const endInterviewService = async (id: string) => {
+  console.log("end in called", id);
+
+  try {
+    const result = await httpService.put<ResponseReturnType>(
+      `/interview-requests/end/${id}`
+    );
+    toast({
+      variant: "success",
+      description: result.data.message,
+    });
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 export {
   isSentService,
   sendService,
@@ -179,4 +206,6 @@ export {
   isAccepted,
   canChatService,
   intStatsService,
+  getInterviewIdService,
+  endInterviewService,
 };

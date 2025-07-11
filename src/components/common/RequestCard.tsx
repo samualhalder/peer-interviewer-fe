@@ -41,11 +41,9 @@ export default function RequestCard({
           </p>
         </div>
         <div
-          className={clsx(
-            "col-span-1 flex gap-2",
-            request.status && " invisible",
-            currentTab == 1 && "invisible"
-          )}
+          className={clsx("col-span-1 flex gap-2", {
+            invisible: request.status !== "pending" || currentTab === 1,
+          })}
         >
           <Button
             onClick={() => {
