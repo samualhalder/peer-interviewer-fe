@@ -6,6 +6,7 @@ import { useSocket } from "@/context/SocketContext";
 import { useRouter } from "next/navigation";
 import { MdOutlinePhone } from "react-icons/md";
 import { endInterviewService } from "@/services/interviewRequest.service";
+import RouteChangeGuard from "../RouteGard";
 
 export default function EndMetting({
   roomId,
@@ -17,17 +18,18 @@ export default function EndMetting({
   const [showEndMeetingModal, setShowEndMeetingModal] = useState(false);
   const [showListenEndMeetingModal, setShowListenEndMeetingModal] =
     useState(false);
+  const [showGaurd, setShowGaurd] = useState(true)
   const socket = useSocket();
   const router = useRouter();
   const handleOnAccept = async () => {
+    setShowGaurd(false)
     await endInterviewService(roomId);
     socket?.emit("end-meeting", roomId);
     stopMyStream();
     router.back();
+    router.back();
   };
   const handleListenEndMeeting = useCallback(() => {
-    console.log("listned");
-
     setShowListenEndMeetingModal(true);
   }, []);
   useEffect(() => {
@@ -36,8 +38,10 @@ export default function EndMetting({
       socket?.off(`end-meeting-${roomId}`, handleListenEndMeeting);
     };
   }, [roomId, socket, handleListenEndMeeting]);
+
   return (
     <>
+    <RouteChangeGuard showGaurd={showGaurd}  />
       <Modal
         title="End Meeting ?"
         descripton="are you sure,you wan't to end this meeting"
@@ -50,7 +54,9 @@ export default function EndMetting({
         descripton="Other person have ended this meeting,So we are takeing you back"
         isOpen={showListenEndMeetingModal}
         onClose={() => {
+          setShowGaurd(false)
           stopMyStream();
+          router.back();
           router.back();
         }}
       />
