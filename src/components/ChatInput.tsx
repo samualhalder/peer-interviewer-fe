@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Flex from "./ui/Flex";
 import { IoSendSharp } from "react-icons/io5";
 
 import Button from "./ui/Button";
@@ -7,9 +6,9 @@ import { sendChatService } from "@/services/char.service";
 
 import { createChatId } from "@/utils/createChatId";
 import { UserType } from "@/types/entity.types";
-import { useSocket } from "@/utils/socket";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { useSocket } from "@/context/SocketContext";
 
 export default function ChatInput({ to }: { to: UserType }) {
   const socket = useSocket();

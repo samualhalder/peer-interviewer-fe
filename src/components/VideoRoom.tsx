@@ -32,6 +32,7 @@ export default function VideoRoom(props: propType) {
 
   const [showWarning, setShowWarning] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [showGaurd, setShowGaurd] = useState(true)
   const [myStream, setMyStream] = useState<MediaStream | null>(null);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null); // for screen share
   const [remoteCameraStream, setRemoteCameraStream] =
@@ -339,6 +340,7 @@ export default function VideoRoom(props: propType) {
         title="Other person rejected you interview call"
         descripton="we are taking you back"
         onClose={() => {
+          setShowGaurd(false)
           setShowWarning(false);
           router.back();
         }}
@@ -393,7 +395,7 @@ export default function VideoRoom(props: propType) {
             >
               <FiMessageSquare />
             </Button>
-            <EndMetting roomId={props.roomId} stopMyStream={stopMyStream} />
+            <EndMetting roomId={props.roomId} stopMyStream={stopMyStream} showGaurd={showGaurd} setShowGaurd={setShowGaurd}/>
           </div>
         </Flex>
         <Flex

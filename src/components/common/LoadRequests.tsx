@@ -3,7 +3,7 @@ import { list, listSent } from "../../services/interviewRequest.service";
 import { InterviewRequestsType } from "@/types/request.types";
 import RequestCard from "./RequestCard";
 import Flex from "../ui/Flex";
-import { TabContext } from "@/app/requests/[id]/page";
+import { TabContext } from "@/app/requests/page";
 
 export default function LoadRequests({
   order = "",

@@ -7,8 +7,10 @@ import { IoCheckmarkDoneOutline } from "react-icons/io5";
 import Break from "./common/Break";
 import LoadRequests from "./common/LoadRequests";
 
+type StatusType="all" | "penidng" | "rejected" | "accepted" | 'completed'
+
 export default function Requests() {
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] = useState<StatusType>("all");
   const [order, setOrder] = useState("desc");
   const data: FilterFieldType[] = [
     {
@@ -35,6 +37,20 @@ export default function Requests() {
     {
       name: "Accepted",
       value: "accepted",
+      field: status,
+      setField: setStatus,
+      icon: <IoCheckmarkDoneOutline />,
+    },
+    {
+      name: "Rejected",
+      value: "rejected",
+      field: status,
+      setField: setStatus,
+      icon: <GoClockFill />,
+    },
+    {
+      name: "Completed",
+      value: "completed",
       field: status,
       setField: setStatus,
       icon: <IoCheckmarkDoneOutline />,

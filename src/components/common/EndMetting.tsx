@@ -11,14 +11,17 @@ import RouteChangeGuard from "../RouteGard";
 export default function EndMetting({
   roomId,
   stopMyStream,
+  showGaurd,
+  setShowGaurd
 }: {
-  roomId: string;
-  stopMyStream: () => void;
+    showGaurd:boolean,
+    roomId: string;
+    stopMyStream: () => void;
+    setShowGaurd:(b:boolean)=>void
 }) {
   const [showEndMeetingModal, setShowEndMeetingModal] = useState(false);
   const [showListenEndMeetingModal, setShowListenEndMeetingModal] =
     useState(false);
-  const [showGaurd, setShowGaurd] = useState(true)
   const socket = useSocket();
   const router = useRouter();
   const handleOnAccept = async () => {

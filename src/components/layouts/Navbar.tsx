@@ -88,11 +88,13 @@ function Avatar() {
 
 function NotificationIcon() {
   return (
+    <Link href={`/notification`}>
     <div
       className={`select-none w-[40px] h-[40px] flex justify-center items-center hover:bg-blue-500 rounded-full cursor-pointer`}
     >
       <IoIosNotificationsOutline size={30} />
     </div>
+    </Link>
   );
 }
 
@@ -128,7 +130,6 @@ function SearchBar() {
 
 function Requests() {
   const { isNewRequests } = useSelector((state: RootState) => state.requests);
-  const { user } = useFetchUser();
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchIsNewRequests = async () => {
@@ -139,7 +140,7 @@ function Requests() {
   }, []);
   return (
     <Link
-      href={`/requests/${user?.id}`}
+      href={`/requests`}
       className={`relative select-none w-[40px] h-[40px] flex justify-center items-center hover:bg-blue-500 rounded-full cursor-pointer`}
     >
       {isNewRequests > 0 && (

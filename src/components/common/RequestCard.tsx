@@ -10,7 +10,7 @@ import {
   rejectService,
 } from "@/services/interviewRequest.service";
 import clsx from "clsx";
-import { TabContext } from "@/app/requests/[id]/page";
+import { TabContext } from "@/app/requests/page";
 import { useDispatch } from "react-redux";
 import { remove } from "@/redux/requestsSlice";
 
