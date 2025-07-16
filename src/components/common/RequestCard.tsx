@@ -13,6 +13,7 @@ import clsx from "clsx";
 import { TabContext } from "@/app/requests/page";
 import { useDispatch } from "react-redux";
 import { remove } from "@/redux/requestsSlice";
+import { useRouter } from "next/navigation";
 
 export default function RequestCard({
   request,
@@ -20,6 +21,7 @@ export default function RequestCard({
   request: InterviewRequestsType;
 }) {
   const { currentTab } = useContext(TabContext);
+  const router=useRouter()
   const dispatch = useDispatch();
   const user = currentTab == 0 ? request.fromuser : request.touser;
   return (
@@ -47,6 +49,7 @@ export default function RequestCard({
         >
           <Button
             onClick={() => {
+                router.push(`/user/${request.from}`)
               acceptService(request.id);
               dispatch(remove());
             }}

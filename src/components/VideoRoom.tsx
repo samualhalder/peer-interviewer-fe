@@ -18,8 +18,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import Chat from "./common/Chat";
 import EndMetting from "./common/EndMetting";
-import { useNavigationGuard } from "@/hooks/useNavigationGaurd";
-import RouteChangeGuard from "./RouteGard";
 interface propType {
   roomId: string;
   peerId: string;
@@ -164,24 +162,26 @@ export default function VideoRoom(props: propType) {
     socket?.emit("camera-permission", { roomId: props.roomId });
     setMyCameraPermission((pre) => !pre);
 
-    setTimeout(() => {
+
       if (stream && PeerService.peer) {
         stream.getTracks().forEach((track) => {
           PeerService.peer!.addTrack(track, stream);
         });
       }
-    }, 1000);
+
   }, [myStream, socket, props.roomId]);
 
   const sendAudio = useCallback(async () => {
     socket?.emit("audio-permission", { roomId: props.roomId });
     setMyAudioPermission((pre) => !pre);
     const stream = await fetchMyStream();
-    if (stream && PeerService.peer) {
-      stream.getTracks().forEach((track) => {
-        PeerService.peer!.addTrack(track, stream);
-      });
-    }
+
+      if (stream && PeerService.peer) {
+        stream.getTracks().forEach((track) => {
+          PeerService.peer!.addTrack(track, stream);
+        });
+      }
+
   }, [myStream, socket, props.roomId]);
 
   const handleOtherUserAcceptedCall = useCallback(

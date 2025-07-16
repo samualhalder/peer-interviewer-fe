@@ -18,6 +18,8 @@ export default function VideoWindow({
   height?: number;
   width?: number;
 }) {
+    console.log('muted',!audio);
+
   return (
     <div
       className="relative border-2 border-white rounded-md overflow-hidden flex items-center justify-center z-30"
@@ -37,6 +39,15 @@ export default function VideoWindow({
           style={{ width: `${width}px`, height: `${height}px` }}
         >
           <Loader color="#025AE0" />
+           { stream &&
+                <ReactPlayer
+                    url={stream}
+                    playing={true}
+                    height={`0px`}
+                    width={`0px`}
+                    muted={!audio}
+                />
+            }
         </div>
       )}
       <div className="absolute bottom-1 left-1 bg-mysecondary text-white px-2 py-1 opacity-70 rounded-lg text-sm">

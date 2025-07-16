@@ -6,6 +6,7 @@ import { RootState } from '@/redux/store'
 
 import { listNotificationService } from '@/services/notification.service'
 
+
 import React, {  useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
@@ -28,6 +29,7 @@ export default function Page() {
                     <NotificationCard notification={notification} key={notification.id}/>
                 ))
             }
+            {notifications.length==0 && <div className=' text-xl '>No Notifications To Show</div>}
         </div>
     )
 }
