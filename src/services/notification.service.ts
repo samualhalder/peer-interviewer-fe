@@ -26,5 +26,18 @@ const seenNotificationService = async (id: string) => {
 
   }
 };
+const unseenNotificationsService = async () => {
+  try {
+    const res=await httpService.get<ResponseReturnType>(`/notifications/unseens`);
+    return res.data.result
 
-export { listNotificationService,seenNotificationService };
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      description: error?.response?.data?.message,
+    });
+
+  }
+};
+
+export { listNotificationService,seenNotificationService,unseenNotificationsService };

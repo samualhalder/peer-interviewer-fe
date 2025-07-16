@@ -4,7 +4,7 @@ export type NotificationsTypes={
     title:string,
     content:string,
     link?:string,
-    seen:string,
+    seen:boolean,
     createdAt?:Date
 
 }

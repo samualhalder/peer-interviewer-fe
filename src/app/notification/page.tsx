@@ -1,22 +1,23 @@
 'use client'
 import NotificationCard from '@/components/common/NotificationCard'
-import { useSocket } from '@/context/SocketContext'
+
+import { set } from '@/redux/notificationSlice'
+import { RootState } from '@/redux/store'
+
 import { listNotificationService } from '@/services/notification.service'
-import { NotificationsTypes } from '@/types/notification.types'
-import React, { useEffect, useState } from 'react'
+
+import React, {  useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+
 
 export default function Page() {
-   const socket=useSocket()
-   const [notifications, setNotifications] = useState<NotificationsTypes[]>([])
-    useEffect(() => {
-        socket?.on('notification',(data)=>{
-            setNotifications([data,...notifications])
-        })
-    }, [notifications,socket])
+    const dispatch=useDispatch();
+    const notifications=useSelector((state:RootState)=>state.notifications.notifications)
     useEffect(() => {
         const fetchNotification=async()=>{
             const res=await listNotificationService();
-            setNotifications(res)
+            dispatch(set({count:res.count,notifications:res.notifications}))
         }
         fetchNotification()
     }, [])

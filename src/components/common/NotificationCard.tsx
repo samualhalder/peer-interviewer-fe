@@ -8,15 +8,18 @@ import Link from "next/link";
 import { NotificationsTypes } from "@/types/notification.types";
 import { IoNotifications } from "react-icons/io5";
 import { seenNotificationService } from "@/services/notification.service";
+import { useDispatch } from "react-redux";
+import { remove } from "@/redux/notificationSlice";
 
 export default function NotificationCard({
   notification,
 }: {
   notification: NotificationsTypes;
 }) {
+    const dispatch=useDispatch()
     const handleClickNoticicaiton=async()=>{
+        dispatch(remove(notification.id))
         await seenNotificationService(notification.id)
-        
     }
 
   return (

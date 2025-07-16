@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Montserrat } from "next/font/google";
 import { IoIosNotificationsOutline, IoIosSearch } from "react-icons/io";
 import { FaUserFriends } from "react-icons/fa";
@@ -18,6 +18,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { set } from "@/redux/requestsSlice";
+import { unseenNotificationsService } from "@/services/notification.service";
+import { set as setNotifications , add as addNotification} from "@/redux/notificationSlice";
+import { useSocket } from "@/context/SocketContext";
 
 const montserratFont = Montserrat({
   subsets: ["latin"],
@@ -87,11 +90,33 @@ function Avatar() {
 }
 
 function NotificationIcon() {
+        const count=useSelector((state:RootState)=>state.notifications.count)
+        const dispatch=useDispatch()
+    useEffect(() => {
+        const fetchUnseenNotifications=async()=>{
+            const res=await unseenNotificationsService()
+            dispatch(setNotifications(res.count))
+        }
+        fetchUnseenNotifications()
+    }, [dispatch])
+
+    const socket=useSocket()
+    const handleNotificationListner=useCallback((data:any)=>{
+        dispatch(addNotification(data))
+    },[dispatch])
+    useEffect(() => {
+        socket?.on('notification',handleNotificationListner)
+        return ()=>{
+            socket?.off('notification',handleNotificationListner)
+        }
+    }, [socket,handleNotificationListner])
+
   return (
     <Link href={`/notification`}>
     <div
-      className={`select-none w-[40px] h-[40px] flex justify-center items-center hover:bg-blue-500 rounded-full cursor-pointer`}
+      className={`relative select-none w-[40px] h-[40px] flex justify-center items-center hover:bg-blue-500 rounded-full cursor-pointer`}
     >
+      {count>0 && <div className=" absolute flex justify-center items-center top-0 right-1 bg-red-600 h-5 w-5 text-xs text-white rounded-full">{count}</div>}
       <IoIosNotificationsOutline size={30} />
     </div>
     </Link>
