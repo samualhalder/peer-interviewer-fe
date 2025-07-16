@@ -19,7 +19,7 @@ import { RootState } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { set } from "@/redux/requestsSlice";
 import { unseenNotificationsService } from "@/services/notification.service";
-import { set as setNotifications , add as addNotification} from "@/redux/notificationSlice";
+import { set as setNotifications , add as addNotification, addByNumber} from "@/redux/notificationSlice";
 import { useSocket } from "@/context/SocketContext";
 
 const montserratFont = Montserrat({
@@ -95,7 +95,7 @@ function NotificationIcon() {
     useEffect(() => {
         const fetchUnseenNotifications=async()=>{
             const res=await unseenNotificationsService()
-            dispatch(setNotifications(res.count))
+            dispatch(addByNumber(res.count))
         }
         fetchUnseenNotifications()
     }, [dispatch])

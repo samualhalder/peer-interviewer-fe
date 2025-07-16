@@ -22,7 +22,7 @@ const notificationSlice = createSlice({
       state.count += 1;
     },
     addByNumber: (state, action) => {
-      state.count += action.payload;
+      state.count = action.payload;
     },
     remove: (state,action) => {
         state.notifications.forEach((noti)=>{
