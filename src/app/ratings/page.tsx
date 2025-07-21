@@ -1,37 +1,42 @@
 "use client";
 import Tab from "@/components/common/Tab";
-import Requests from "@/components/Requests";
+import Ratings from "@/components/Ratings";
+
 import Flex from "@/components/ui/Flex";
 import { TabType } from "@/types/tab.types";
 import React, { createContext, useState } from "react";
 
-type contextType = {
+type RatingTabcontextType = {
   currentTab: number;
 };
-export const TabContext = createContext<contextType>({ currentTab: 0 });
+export const RatingsTabContext = createContext<RatingTabcontextType>({ currentTab: 0 });
 export default function Page() {
   const [currentTab, setCurrentTab] = useState(0);
   const tabs: TabType[] = [
     {
-      name: "Request Recived",
+      name: "Give Rating",
       index: 0,
     },
     {
-      name: "Request Sent",
+      name: "Ratings Given",
       index: 1,
+    },
+    {
+      name: "Ratings Recived",
+      index: 2,
     },
   ];
 
   return (
-    <TabContext.Provider value={{ currentTab }}>
+    <RatingsTabContext.Provider value={{ currentTab }}>
       <Flex justify="start" items="center" className="w-full">
         <Tab
           tabs={tabs}
           currentValue={currentTab}
           setCurrentValue={setCurrentTab}
         />
-        <Requests />
+        <Ratings/>
       </Flex>
-    </TabContext.Provider>
+    </RatingsTabContext.Provider>
   );
 }

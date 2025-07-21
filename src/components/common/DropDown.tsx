@@ -12,6 +12,7 @@ import { signOutService } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
 import Break from "./Break";
 import useOutSideClick from "@/hooks/useOutSideClick";
+import { MdRateReview } from "react-icons/md";
 
 function DropDown({
   isVissible = false,
@@ -31,6 +32,11 @@ function DropDown({
           icon={<AiOutlineUser />}
           title="Profile"
           action={() => router.push("/profile")}
+        />
+        <DropDownItem
+          icon={<MdRateReview />}
+          title="Ratings"
+          action={() => router.push("/ratings")}
         />
         <DropDownItem icon={<AiOutlineSetting />} title="Settings" />
         <DropDownItem
