@@ -7,6 +7,10 @@ const montserratFont = Montserrat({
   subsets: ["latin"],
   weight: "400",
 });
+export const metadata = {
+  title: "Peer Interviewer",
+  description: "Give interview among peers",
+};
 
 export default function Home() {
   return (

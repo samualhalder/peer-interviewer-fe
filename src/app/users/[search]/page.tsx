@@ -1,14 +1,20 @@
 import ShowUserCards from "@/components/ShowUserCards";
-import UserCard from "@/components/UserCard";
-import useFetchUsers from "@/hooks/useFetchUsers";
+import { Metadata } from "next";
 
-export default async function Page({
-  params,
-}: {
+type PropType = {
   params: Promise<{ search: string }>;
-}) {
+};
+export const generateMetadata = async ({
+  params,
+}: PropType): Promise<Metadata> => {
+  const search = decodeURIComponent((await params).search);
+  return {
+    title: `results for ${search}`,
+  };
+};
+
+export default async function Page({ params }: PropType) {
   const { search } = await params;
-  
 
   return (
     <div>

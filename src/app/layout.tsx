@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import Navbar from "@/components/layouts/Navbar";
 import AuthGuard from "./AuthGaurd";
 import Providers from "./providers";
+import { Metadata } from "next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

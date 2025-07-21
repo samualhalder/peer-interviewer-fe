@@ -77,7 +77,7 @@ const signOutService = () => {
     description: "Sign out successgull",
   });
 };
-const checkValidToken = async (token: string) => {
+const checkValidToken = async (token?: string) => {
   try {
     const result = await httpService.post<ResponseReturnType>(
       "/auth/valid-jwt",
