@@ -40,7 +40,7 @@ function GiveRating() {
     fetchCompletedInt();
   }, []);
   return (
-    <div className="w-[100%] flex flex-col items-center justify-start ">
+    <div className="w-[100%] flex flex-col items-center justify-start gap-2 ">
       {completedInterviews?.map((int) => (
         <GiveRatingCard interview={int} key={int.id} />
       ))}
