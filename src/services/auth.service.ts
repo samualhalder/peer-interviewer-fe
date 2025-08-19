@@ -143,7 +143,18 @@ const getUsersByIdService = async (id: string) => {
     const result = await httpService.get<ResponseReturnType>(
       `/auth/get-user/${id}`
     );
+    return result?.data?.result;
+  } catch (error: any) {
+    console.log(error);
 
+    return {};
+  }
+};
+const isPasswordSetService = async () => {
+  try {
+    const result = await httpService.get<ResponseReturnType>(
+      `/auth/is-password-set`
+    );
     return result?.data?.result;
   } catch (error: any) {
     console.log(error);
@@ -162,4 +173,5 @@ export {
   resetpasswordService,
   getUsersService,
   getUsersByIdService,
+  isPasswordSetService,
 };

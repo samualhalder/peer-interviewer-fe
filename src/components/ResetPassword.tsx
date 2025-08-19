@@ -1,8 +1,11 @@
 "use client";
-import { resetpasswordService } from "@/services/auth.service";
+import {
+  isPasswordSetService,
+  resetpasswordService,
+} from "@/services/auth.service";
 import { resetPasswordValidatiaonSchema } from "@/validations/auth.validation";
 import { Form, Formik } from "formik";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import InputField from "./ui/InputField";
 import Button from "./ui/Button";
 import { MdChangeCircle } from "react-icons/md";
@@ -11,6 +14,14 @@ import Grid from "./ui/Grid";
 import HeadingTitle from "./common/HeadingTitle";
 
 export default function ResetPassword() {
+  const [isPasswordSet, setIsPasswordSet] = useState(false);
+  useEffect(() => {
+    const fetchIsPasswordset = async () => {
+      const res = await isPasswordSetService();
+      setIsPasswordSet(res);
+    };
+    fetchIsPasswordset();
+  }, []);
   return (
     <div className="w-full">
       <HeadingTitle
@@ -19,7 +30,6 @@ export default function ResetPassword() {
       />
       <Formik
         initialValues={{
-          currentPassword: "",
           newPassword: "",
           confirmPassword: "",
         }}
@@ -33,14 +43,7 @@ export default function ResetPassword() {
       >
         {({ errors, touched }) => (
           <Form>
-            <Grid>
-              <InputField
-                errors={errors}
-                touched={touched}
-                name="currentPassword"
-                label="Current Password*"
-                as="input"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <InputField
                 errors={errors}
                 touched={touched}
@@ -55,7 +58,7 @@ export default function ResetPassword() {
                 label="Confirm Password*"
                 as="input"
               />
-            </Grid>
+            </div>
             <Button type="submit" className="mt-2">
               Save
             </Button>

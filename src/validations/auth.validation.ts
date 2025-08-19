@@ -16,7 +16,6 @@ export const signinValidationSchema = Yup.object().shape({
 });
 
 export const resetPasswordValidatiaonSchema = Yup.object().shape({
-  currentPassword: Yup.string().required("Current Password is required"),
   newPassword: Yup.string().required("New Password is required"),
   confirmPassword: Yup.string()
     .required("Confirm Password is required")

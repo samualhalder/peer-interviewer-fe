@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 import { Montserrat } from "next/font/google";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
@@ -8,7 +7,7 @@ const montserratFont = Montserrat({
   weight: "400",
 });
 export const metadata = {
-  title: "Peer Interviewer",
+  title: "Peer Interviewer | Home",
   description: "Give interview among peers",
 };
 
