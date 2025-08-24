@@ -1,49 +1,48 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSocket } from "@/context/SocketContext";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import PeerService from "@/services/peer.service";
-import { isAccepted as isAcceptedService } from "@/services/interviewRequest.service";
-import Button from "./ui/Button";
+
 import Modal from "./ui/Modal";
-import { UserContext } from "./layouts/UserPageLayout";
+
 import { createRoomId } from "@/utils/createRoom";
 
-export default function StartInterview() {
-  const to = useContext(UserContext);
+export default function CatchIntRequest() {
   const { user } = useSelector((state: RootState) => state.user);
   const socket = useSocket();
-  const [isAccepted, setIsAccepted] = useState(false);
   const router = useRouter();
   const [currentRoom, setCurrentRoom] = useState(null);
+  const [peerId, setpeerId] = useState(null);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [remoteDescription, setRemoteDescription] =
     useState<RTCSessionDescription | null>(null);
 
-  useEffect(() => {
-    const fetchRoomId = async () => {
-      const res = await createRoomId(user?.id as string, to?.id as string);
-      setCurrentRoom(res);
-    };
-    fetchRoomId();
-  }, [user, to]);
-
   const handleInterviewRequest = async (data: any) => {
-    const { room, offer } = data;
-    if (room == currentRoom) {
+    const { offer, userId, peerId } = data;
+    if (user?.id == userId) {
       setRemoteDescription(offer);
       setShowRequestModal(true);
+      setpeerId(peerId);
     }
   };
+  useEffect(() => {
+    const fetchRoomId = async (peerId: string) => {
+      const res = await createRoomId(user?.id as string, peerId as string);
+      setCurrentRoom(res);
+    };
+    if (peerId) fetchRoomId(peerId);
+  }, [user, peerId]);
 
   const onAccept = async () => {
     if (remoteDescription) {
       const answer = await PeerService.getAnswer(remoteDescription);
       socket?.emit("call-accepted", { room: currentRoom, answer });
     }
-    router.push(`/interview-room/${currentRoom}?peerId=${to?.id}`);
+    router.push(`/interview-room/${currentRoom}?peerId=${peerId}`);
+    setpeerId(null);
   };
 
   const onReject = () => {
@@ -59,36 +58,8 @@ export default function StartInterview() {
     };
   });
 
-  useEffect(() => {
-    const checkIsAccepted = async (id: string) => {
-      const res = await isAcceptedService(id);
-
-      setIsAccepted(res);
-    };
-
-    if (to?.id) checkIsAccepted(to.id);
-  }, [to?.id]);
-
-  const handleStartInterview = async () => {
-    // TODO: dont need to call this api just take room id from isAccepted service
-    const room = await createRoomId(to?.id as string, user?.id as string);
-    const offer = await PeerService.getOffer();
-    socket?.emit("start-interview", {
-      room,
-      offer,
-      userId: user?.id,
-      peerId: to?.id,
-    });
-    router.push(`/interview-room/${room}?peerId=${to?.id}`);
-  };
-
   return (
     <>
-      {isAccepted && (
-        <Button className="w-full bg-green-500" onClick={handleStartInterview}>
-          Start The Interview
-        </Button>
-      )}
       <Modal
         isOpen={showRequestModal}
         title={"Incoming Call"}

@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Montserrat } from "next/font/google";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
+import CatchIntRequest from "@/components/CatchIntRequest";
 
 const montserratFont = Montserrat({
   subsets: ["latin"],
@@ -15,6 +16,7 @@ export default function Home() {
   return (
     <div className="">
       <HomeBackGround>
+        <CatchIntRequest />
         <HomeIntro />
         <HomeCard />
       </HomeBackGround>
