@@ -4,8 +4,10 @@ import { ResponseReturnType } from "@/types/service.types";
 
 const listNotificationService = async () => {
   try {
-   const data= await httpService.get<ResponseReturnType>("/notifications/list");
-   return data.data.result;
+    const data = await httpService.get<ResponseReturnType>(
+      "/notifications/list"
+    );
+    return data.data.result;
   } catch (error: any) {
     toast({
       variant: "destructive",
@@ -17,27 +19,29 @@ const listNotificationService = async () => {
 const seenNotificationService = async (id: string) => {
   try {
     await httpService.put<ResponseReturnType>(`/notifications/seen/${id}`);
-
   } catch (error: any) {
-    toast({
-      variant: "destructive",
-      description: error?.response?.data?.message,
-    });
-
+    // toast({
+    //   variant: "destructive",
+    //   description: error?.response?.data?.message,
+    // });
   }
 };
 const unseenNotificationsService = async () => {
   try {
-    const res=await httpService.get<ResponseReturnType>(`/notifications/unseens`);
-    return res.data.result
-
+    const res = await httpService.get<ResponseReturnType>(
+      `/notifications/unseens`
+    );
+    return res.data.result;
   } catch (error: any) {
-    toast({
-      variant: "destructive",
-      description: error?.response?.data?.message,
-    });
-
+    // toast({
+    //   variant: "destructive",
+    //   description: error?.response?.data?.message,
+    // });
   }
 };
 
-export { listNotificationService,seenNotificationService,unseenNotificationsService };
+export {
+  listNotificationService,
+  seenNotificationService,
+  unseenNotificationsService,
+};

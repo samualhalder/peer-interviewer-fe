@@ -1,15 +1,9 @@
-"use client";
-
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
-
-import MainLayout from "@/components/layouts/MainLayout";
-import { usePathname } from "next/navigation";
-import Navbar from "@/components/layouts/Navbar";
 import AuthGuard from "./AuthGaurd";
 import Providers from "./providers";
-import { Metadata } from "next";
+import Paths from "@/components/Paths";
+import CatchIntRequest from "@/components/CatchIntRequest";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,8 +25,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const noNavbarPaths = ["/signup", "/signin", "/interview-room/*"];
-  const pathname = usePathname();
   return (
     <html lang="en">
       <body
@@ -40,20 +32,7 @@ export default function RootLayout({
       >
         <Providers>
           <AuthGuard>
-            {noNavbarPaths.includes(pathname) ||
-            pathname.startsWith("/interview-room") ? (
-              <div className="h-screen flex justify-center items-center">
-                {children}
-                <Toaster />
-              </div>
-            ) : (
-              <>
-                {" "}
-                <Navbar />
-                <MainLayout>{children}</MainLayout>
-                <Toaster />
-              </>
-            )}
+            <Paths>{children}</Paths>
           </AuthGuard>
         </Providers>
       </body>

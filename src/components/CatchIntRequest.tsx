@@ -9,6 +9,7 @@ import PeerService from "@/services/peer.service";
 import Modal from "./ui/Modal";
 
 import { createRoomId } from "@/utils/createRoom";
+import CallPopUp from "./common/CallPopUp";
 
 export default function CatchIntRequest() {
   const { user } = useSelector((state: RootState) => state.user);
@@ -26,6 +27,7 @@ export default function CatchIntRequest() {
       setRemoteDescription(offer);
       setShowRequestModal(true);
       setpeerId(peerId);
+      console.log("int start req");
     }
   };
   useEffect(() => {
@@ -60,7 +62,7 @@ export default function CatchIntRequest() {
 
   return (
     <>
-      <Modal
+      <CallPopUp
         isOpen={showRequestModal}
         title={"Incoming Call"}
         descripton="You got the interview call accept to continue with the interview."
