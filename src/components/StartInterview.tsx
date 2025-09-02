@@ -31,6 +31,8 @@ export default function StartInterview() {
   }, [user, to]);
 
   const handleInterviewRequest = async (data: any) => {
+    console.log("got start req", data);
+
     const { room, offer } = data;
     if (room == currentRoom) {
       setRemoteDescription(offer);
@@ -55,7 +57,7 @@ export default function StartInterview() {
     socket?.on("interview-start-request", handleInterviewRequest);
 
     return () => {
-      socket?.off("interview-start-request");
+      socket?.off("interview-start-request", handleInterviewRequest);
     };
   });
 

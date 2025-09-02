@@ -30,7 +30,7 @@ export default function VideoRoom(props: propType) {
 
   const [showWarning, setShowWarning] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [showGaurd, setShowGaurd] = useState(true)
+  const [showGaurd, setShowGaurd] = useState(true);
   const [myStream, setMyStream] = useState<MediaStream | null>(null);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null); // for screen share
   const [remoteCameraStream, setRemoteCameraStream] =
@@ -43,6 +43,8 @@ export default function VideoRoom(props: propType) {
   const [peerCameraPermission, setPeerCameraPermission] = useState(false);
   const [myAudioPermission, setMyAudioPermission] = useState(false);
   const [peerAudioPermission, setPeerAudioPermission] = useState(false);
+
+  console.log("p-camera", peerCameraPermission, remoteCameraStream);
 
   // ----------------- negosiation-------------------
 
@@ -162,13 +164,11 @@ export default function VideoRoom(props: propType) {
     socket?.emit("camera-permission", { roomId: props.roomId });
     setMyCameraPermission((pre) => !pre);
 
-
-      if (stream && PeerService.peer) {
-        stream.getTracks().forEach((track) => {
-          PeerService.peer!.addTrack(track, stream);
-        });
-      }
-
+    if (stream && PeerService.peer) {
+      stream.getTracks().forEach((track) => {
+        PeerService.peer!.addTrack(track, stream);
+      });
+    }
   }, [myStream, socket, props.roomId]);
 
   const sendAudio = useCallback(async () => {
@@ -176,12 +176,11 @@ export default function VideoRoom(props: propType) {
     setMyAudioPermission((pre) => !pre);
     const stream = await fetchMyStream();
 
-      if (stream && PeerService.peer) {
-        stream.getTracks().forEach((track) => {
-          PeerService.peer!.addTrack(track, stream);
-        });
-      }
-
+    if (stream && PeerService.peer) {
+      stream.getTracks().forEach((track) => {
+        PeerService.peer!.addTrack(track, stream);
+      });
+    }
   }, [myStream, socket, props.roomId]);
 
   const handleOtherUserAcceptedCall = useCallback(
@@ -192,13 +191,9 @@ export default function VideoRoom(props: propType) {
   );
 
   const handleTrack = async (ev: any) => {
-    console.log("handle track is getting tracks");
+    console.log("tandle track xnxx");
 
-    // const remoteStream = ev.streams[0];
-
-    // 39f65298-7417-4a47-947a-2cde4df1e830
     const track = ev.track;
-    console.log("track", track);
 
     if (track.kind === "video") {
       const stream = new MediaStream([track]);
@@ -214,6 +209,7 @@ export default function VideoRoom(props: propType) {
 
   const stopScreenShare = (screenTrack: MediaStreamTrack) => {
     console.log("⛔ Stopping screen share...");
+    socket?.emit("stoping-screen-sharing", { roomId: props.roomId });
     screenTrackIds.current.clear();
     setRemoteScreenStream(null);
     PeerService.peer?.getSenders().forEach((sender) => {
@@ -244,7 +240,6 @@ export default function VideoRoom(props: propType) {
         video: true,
       });
       const screenTrack = screenStream.getVideoTracks()[0];
-      console.log("shared trackid", screenTrack.id);
 
       socket?.emit("sharing-screen-tracks", {
         roomId: props.roomId,
@@ -279,6 +274,13 @@ export default function VideoRoom(props: propType) {
       console.error("Error starting screen share:", error);
     }
   };
+  const handleEndScreenShareing = () => {
+    console.log("⛔ Stopping Remote screen share...");
+    screenTrackIds.current.clear();
+    setRemoteScreenStream(null);
+
+    console.log("✅ Remote Screen share stopped, camera remains active!");
+  };
   //   useEffect(() => {
   //     sendRemoteStream();
   //   }, []);
@@ -302,6 +304,7 @@ export default function VideoRoom(props: propType) {
     socket?.on(`audio-permission-${props.roomId}`, handlePeerAudioPermission);
     socket?.on(`camera-permission-${props.roomId}`, handlePeerCameraPermission);
     socket?.on(`incoming-screen-sharing-${props.roomId}`, handleSetTrackId);
+    socket?.on(`end-screen-sharing-${props.roomId}`, handleEndScreenShareing);
 
     return () => {
       socket?.off(`declined-${props.roomId}`);
@@ -317,6 +320,11 @@ export default function VideoRoom(props: propType) {
       socket?.off(
         `camera-permission-${props.roomId}`,
         handlePeerCameraPermission
+      );
+      socket?.off(`incoming-screen-sharing-${props.roomId}`, handleSetTrackId);
+      socket?.off(
+        `end-screen-sharing-${props.roomId}`,
+        handleEndScreenShareing
       );
     };
   }, [
@@ -340,7 +348,7 @@ export default function VideoRoom(props: propType) {
         title="Other person rejected you interview call"
         descripton="we are taking you back"
         onClose={() => {
-          setShowGaurd(false)
+          setShowGaurd(false);
           setShowWarning(false);
           router.back();
         }}
@@ -395,7 +403,12 @@ export default function VideoRoom(props: propType) {
             >
               <FiMessageSquare />
             </Button>
-            <EndMetting roomId={props.roomId} stopMyStream={stopMyStream} showGaurd={showGaurd} setShowGaurd={setShowGaurd}/>
+            <EndMetting
+              roomId={props.roomId}
+              stopMyStream={stopMyStream}
+              showGaurd={showGaurd}
+              setShowGaurd={setShowGaurd}
+            />
           </div>
         </Flex>
         <Flex
@@ -404,13 +417,15 @@ export default function VideoRoom(props: propType) {
           } bg-blue-400 overflow-hidden rounded-md`}
           justify="start"
         >
-          <ReactPlayer
-            url={remoteScreenStream as MediaStream}
-            playing={true}
-            height="100%"
-            width="100%"
-            muted={true}
-          />
+          {remoteScreenStream && (
+            <ReactPlayer
+              url={remoteScreenStream as MediaStream}
+              playing={true}
+              height="100%"
+              width="100%"
+              muted={true}
+            />
+          )}
         </Flex>
         <div
           className={`${
