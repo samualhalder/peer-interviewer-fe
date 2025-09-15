@@ -1,4 +1,3 @@
-import { RatingsTabContext } from "@/app/ratings/page";
 import { listSent } from "@/services/interviewRequest.service";
 import { InterviewRequestsType } from "@/types/request.types";
 import React, { useContext, useEffect, useState } from "react";
@@ -15,9 +14,10 @@ import {
   updateRatingService,
 } from "@/services/ratingService";
 import { RatingsType } from "@/types/ratings.types";
+import { TabContext } from "@/context/TabContext";
 
 export default function Ratings() {
-  const { currentTab } = useContext(RatingsTabContext);
+  const { currentTab } = useContext(TabContext);
 
   return (
     <div className="w-full ">

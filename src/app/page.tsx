@@ -46,7 +46,7 @@ function HomeCard() {
     <div className="px-4 py-4 rounded-lg text-white grid grid-cols-2 bg-mysecondary shadow-xl gap-5">
       <div className="col-span-1 flex items-center justify-center">
         <p className="text-lg">
-          Preparing for your first interview can be challenging. That's why
+          Preparing for your first interview can be challenging. Thats why
           participating in mock interviews is highly recommended. Practicing
           with peers who understand the interview process can provide valuable
           insights and help simulate real interview conditions. Connect with

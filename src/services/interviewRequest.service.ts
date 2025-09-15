@@ -70,6 +70,8 @@ const list = async (order: string, status: string) => {
 
     return result.data.result;
   } catch (error: any) {
+    console.log(error);
+
     return [];
   }
 };
@@ -81,6 +83,8 @@ const listSent = async (order: string, status: string) => {
 
     return result.data.result;
   } catch (error: any) {
+    console.log(error);
+
     return [];
   }
 };
@@ -128,6 +132,8 @@ const checkNewRequests = async () => {
     );
     return result.data.result;
   } catch (error) {
+    console.log(error);
+
     return 0;
   }
 };
@@ -142,6 +148,8 @@ const isAccepted = async (id: string) => {
     }
     return false;
   } catch (error) {
+    console.log(error);
+
     return false;
   }
 };
@@ -152,6 +160,8 @@ const canChatService = async (id: string) => {
     );
     return result.data.result;
   } catch (error) {
+    console.log(error);
+
     return false;
   }
 };
@@ -164,6 +174,8 @@ const intStatsService = async (id: string) => {
 
     return result.data.result;
   } catch (error) {
+    console.log(error);
+
     return false;
   }
 };
@@ -175,6 +187,8 @@ const getInterviewIdService = async (from: string, to: string) => {
 
     return result.data.result;
   } catch (error) {
+    console.log(error);
+
     return false;
   }
 };
@@ -191,6 +205,8 @@ const endInterviewService = async (id: string) => {
     });
     return true;
   } catch (error) {
+    console.log(error);
+
     return false;
   }
 };

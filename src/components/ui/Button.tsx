@@ -2,7 +2,7 @@ import { cva } from "class-variance-authority";
 import React from "react";
 import { cn } from "../../utils/cn";
 
-const buttonVariant = cva(
+export const buttonVariants = cva(
   "px-4 py-2 rounded-md hover:opacity-50 font-semibold self-center",
   {
     variants: {
@@ -43,7 +43,7 @@ export default function Button({
     <div className="w-full flex justify-center items-center relative group">
       <button
         {...props}
-        className={cn(buttonVariant({ variant, size }), className)}
+        className={cn(buttonVariants({ variant, size }), className)}
       />
       {hover && (
         <span className=" absolute bottom-10 right-auto whitespace-nowrap bg-gray-400 text-white py-2 px-4 text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-150">

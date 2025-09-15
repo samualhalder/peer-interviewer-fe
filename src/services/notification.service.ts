@@ -20,6 +20,8 @@ const seenNotificationService = async (id: string) => {
   try {
     await httpService.put<ResponseReturnType>(`/notifications/seen/${id}`);
   } catch (error: any) {
+    console.log(error);
+
     // toast({
     //   variant: "destructive",
     //   description: error?.response?.data?.message,
@@ -33,6 +35,8 @@ const unseenNotificationsService = async () => {
     );
     return res.data.result;
   } catch (error: any) {
+    console.log(error);
+
     // toast({
     //   variant: "destructive",
     //   description: error?.response?.data?.message,

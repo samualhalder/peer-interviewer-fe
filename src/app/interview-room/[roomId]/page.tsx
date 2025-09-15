@@ -6,19 +6,15 @@ export const metadata = {
   description: "Give interview among peers",
 };
 
-export default function Page({
-  params,
-  searchParams,
-}: {
-  params: { roomId: string };
-  searchParams: { peerId?: string };
-}) {
+// ❌ Don't declare your own PageProps
+// ✅ Let Next.js handle it
+export default function Page({ params, searchParams }: any) {
   const { roomId } = params;
-  const peerId = searchParams.peerId ?? null;
+  const peerId = searchParams?.peerId ?? "";
 
   return (
-    <div className="h-screen w-screen overflow-y-hidden flex justify-center items-center ">
-      <VideoRoom roomId={roomId} peerId={peerId as string} />
+    <div className="h-screen w-screen overflow-y-hidden flex justify-center items-center">
+      <VideoRoom roomId={roomId} peerId={peerId} />
     </div>
   );
 }

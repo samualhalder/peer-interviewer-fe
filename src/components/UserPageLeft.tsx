@@ -5,7 +5,7 @@ import ImageCircle from "./common/ImageCircle";
 
 import { UserContext } from "./layouts/UserPageLayout";
 import Button from "./ui/Button";
-import { GoOrganization, GoLocation, GoHeart } from "react-icons/go";
+import { GoOrganization, GoLocation} from "react-icons/go";
 import { IoSendSharp, IoHeartDislike, IoHeart } from "react-icons/io5";
 import { MdCancel, MdCancelScheduleSend } from "react-icons/md";
 import {

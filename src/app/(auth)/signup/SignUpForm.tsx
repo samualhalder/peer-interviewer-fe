@@ -1,5 +1,5 @@
 import React from "react";
-import { Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 
 import Button from "@/components/ui/Button";
 import { signupValidationSchema } from "@/validations/auth.validation";

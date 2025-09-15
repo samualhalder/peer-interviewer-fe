@@ -2,13 +2,10 @@
 import Tab from "@/components/common/Tab";
 import Requests from "@/components/Requests";
 import Flex from "@/components/ui/Flex";
+import { TabContext } from "@/context/TabContext";
 import { TabType } from "@/types/tab.types";
-import React, { createContext, useState } from "react";
+import React, { useState } from "react";
 
-type contextType = {
-  currentTab: number;
-};
-export const TabContext = createContext<contextType>({ currentTab: 0 });
 export default function Page() {
   const [currentTab, setCurrentTab] = useState(0);
   const tabs: TabType[] = [

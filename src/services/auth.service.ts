@@ -86,6 +86,8 @@ const checkValidToken = async (token?: string) => {
 
     return !result?.data?.result;
   } catch (err: any) {
+    console.log(err);
+
     return false;
   }
 };
@@ -97,6 +99,7 @@ const fetchUser = async () => {
 
     return result?.data?.result;
   } catch (err: any) {
+    console.log(err);
     return null;
   }
 };

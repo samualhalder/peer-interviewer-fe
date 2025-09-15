@@ -3,15 +3,12 @@ import Tab from "@/components/common/Tab";
 import Ratings from "@/components/Ratings";
 
 import Flex from "@/components/ui/Flex";
+import { TabContext } from "@/context/TabContext";
 import { TabType } from "@/types/tab.types";
-import React, { createContext, useState } from "react";
+import React, { useState } from "react";
 
-type RatingTabcontextType = {
-  currentTab: number;
-};
-export const RatingsTabContext = createContext<RatingTabcontextType>({ currentTab: 0 });
 export default function Page() {
-  const [currentTab, setCurrentTab] = useState(0);
+  const [currentTab, setCurrentTab] = useState<number>(0);
   const tabs: TabType[] = [
     {
       name: "Give Rating",
@@ -28,15 +25,15 @@ export default function Page() {
   ];
 
   return (
-    <RatingsTabContext.Provider value={{ currentTab }}>
+    <TabContext.Provider value={{ currentTab: currentTab }}>
       <Flex justify="start" items="center" className="w-full">
         <Tab
           tabs={tabs}
           currentValue={currentTab}
           setCurrentValue={setCurrentTab}
         />
-        <Ratings/>
+        <Ratings />
       </Flex>
-    </RatingsTabContext.Provider>
+    </TabContext.Provider>
   );
 }

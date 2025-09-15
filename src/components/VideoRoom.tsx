@@ -44,7 +44,7 @@ export default function VideoRoom(props: propType) {
   const [myAudioPermission, setMyAudioPermission] = useState(false);
   const [peerAudioPermission, setPeerAudioPermission] = useState(false);
 
-  console.log("p-camera", peerCameraPermission, remoteCameraStream);
+  console.log(recordedVideoUrl);
 
   // ----------------- negosiation-------------------
 
@@ -79,8 +79,6 @@ export default function VideoRoom(props: propType) {
   // #3: now first user accept that answer and complete the negosiation cycle
   const handleNegosiationDone = useCallback(
     async (data: { answer: RTCSessionDescription }) => {
-      console.log("nego-done", data.answer);
-
       await PeerService.setLocalDescription(data.answer);
     },
     []
@@ -191,8 +189,6 @@ export default function VideoRoom(props: propType) {
   );
 
   const handleTrack = async (ev: any) => {
-    console.log("tandle track xnxx");
-
     const track = ev.track;
 
     if (track.kind === "video") {
@@ -205,10 +201,7 @@ export default function VideoRoom(props: propType) {
     }
   };
 
-  console.log("remoteScreenStream", remoteScreenStream);
-
   const stopScreenShare = (screenTrack: MediaStreamTrack) => {
-    console.log("⛔ Stopping screen share...");
     socket?.emit("stoping-screen-sharing", { roomId: props.roomId });
     screenTrackIds.current.clear();
     setRemoteScreenStream(null);
@@ -225,12 +218,8 @@ export default function VideoRoom(props: propType) {
     //   );
     //   return newStream;
     // });
-
-    console.log("✅ Screen share stopped, camera remains active!");
   };
   const startScreenShare = async () => {
-    console.log("starting screen sharing");
-
     try {
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
@@ -268,18 +257,13 @@ export default function VideoRoom(props: propType) {
       screenTrack.onended = () => {
         stopScreenShare(screenTrack);
       };
-
-      console.log("✅ Screen sharing started while keeping camera active!");
     } catch (error) {
       console.error("Error starting screen share:", error);
     }
   };
   const handleEndScreenShareing = () => {
-    console.log("⛔ Stopping Remote screen share...");
     screenTrackIds.current.clear();
     setRemoteScreenStream(null);
-
-    console.log("✅ Remote Screen share stopped, camera remains active!");
   };
   //   useEffect(() => {
   //     sendRemoteStream();

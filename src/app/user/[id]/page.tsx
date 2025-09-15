@@ -5,23 +5,20 @@ import { getUsersByIdService } from "@/services/auth.service";
 import { Metadata } from "next";
 import React from "react";
 
-type PropType = {
-  params: { id: string };
-};
-export const generateMetadata = async ({
-  params,
-}: PropType): Promise<Metadata> => {
-  const { id } = params;
+// type PageProps = {
+//   params: { id: string };
+// };
+export const generateMetadata = async (props: any): Promise<Metadata> => {
+  const { id } = props.params as { id: string };
   const user = await getUsersByIdService(id);
-  console.log("ud mt", user);
 
   return {
     title: `Profile | ${user?.name}`,
   };
 };
 
-export default async function Page({ params }: PropType) {
-  const { id } = params;
+export default async function Page(props: any) {
+  const { id } = props.params as { id: string };
 
   return (
     <UserPageLayout id={id}>

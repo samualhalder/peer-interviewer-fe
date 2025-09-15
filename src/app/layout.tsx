@@ -3,7 +3,6 @@ import "./globals.css";
 import AuthGuard from "./AuthGaurd";
 import Providers from "./providers";
 import Paths from "@/components/Paths";
-import CatchIntRequest from "@/components/CatchIntRequest";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

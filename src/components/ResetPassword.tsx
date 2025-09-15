@@ -1,27 +1,15 @@
 "use client";
-import {
-  isPasswordSetService,
-  resetpasswordService,
-} from "@/services/auth.service";
+import { resetpasswordService } from "@/services/auth.service";
 import { resetPasswordValidatiaonSchema } from "@/validations/auth.validation";
 import { Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import InputField from "./ui/InputField";
 import Button from "./ui/Button";
 import { MdChangeCircle } from "react-icons/md";
 
-import Grid from "./ui/Grid";
 import HeadingTitle from "./common/HeadingTitle";
 
 export default function ResetPassword() {
-  const [isPasswordSet, setIsPasswordSet] = useState(false);
-  useEffect(() => {
-    const fetchIsPasswordset = async () => {
-      const res = await isPasswordSetService();
-      setIsPasswordSet(res);
-    };
-    fetchIsPasswordset();
-  }, []);
   return (
     <div className="w-full">
       <HeadingTitle

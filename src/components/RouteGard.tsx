@@ -14,7 +14,7 @@ const RouteChangeGuard = ({ showGaurd = true }: { showGaurd: boolean }) => {
       initializedRef.current = true;
     }
 
-    const handlePopState = (e: PopStateEvent) => {
+    const handlePopState = () => {
       if (!showGaurd) return;
 
       setShowModal(true);

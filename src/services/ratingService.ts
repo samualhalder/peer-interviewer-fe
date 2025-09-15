@@ -30,6 +30,8 @@ const getRatingByIntId = async (id: string) => {
     );
     return data.data.result;
   } catch (error: any) {
+    console.log(error);
+
     return { rating: 0, review: "" };
   }
 };

@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from "react";
 import Flex from "./ui/Flex";
 import { IoAddCircleSharp } from "react-icons/io5";
 import { techStacks } from "../lib/techStacks";
-import { RxCross1 } from "react-icons/rx";
 import Button from "./ui/Button";
 import { leftProfileFormService } from "@/services/profile.service";
 import useFetchUser from "@/hooks/useFetchUser";
