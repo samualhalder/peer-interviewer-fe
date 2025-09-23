@@ -48,7 +48,7 @@ export default function Chat(props: propsType) {
   }, [to, chatDivRef.current]);
 
   return (
-    <div className="  flex flex-col gap-5 justify-end max-h-full px-2 w-[100%]">
+    <div className="flex flex-col gap-5 justify-end max-h-full px-2 w-[100%] h-full">
       <div className=" h-[98%] overflow-y-scroll " ref={chatDivRef}>
         {chats.map((chat, ind) => (
           <ChatText

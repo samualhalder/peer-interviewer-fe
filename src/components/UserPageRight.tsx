@@ -53,7 +53,7 @@ export default function UserPageRight() {
     <>
       <Flex
         gap="xl"
-        className="md:col-span-2 p-2 rounded-md md:h-[100%]"
+        className="md:col-span-2 p-2 rounded-md md:h-full"
         items="center"
         justify="between"
       >
@@ -80,7 +80,7 @@ export default function UserPageRight() {
           <Break color="#025AE0" />
         </Flex>
         {canChat ? (
-          <div className="h-[500px]">
+          <div className="max-h-[75%] min-h-[75%] w-full">
             <Chat to={to as UserType} user={user as UserType} />
           </div>
         ) : (
