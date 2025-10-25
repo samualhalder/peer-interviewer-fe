@@ -346,14 +346,14 @@ export default function VideoRoom(props: propType) {
           <VideoWindow
             stream={myStream as MediaStream}
             name={user?.name}
-            audio={myAudioPermission}
+            audio={peerAudioPermission}
             video={myCameraPermission}
           />
 
           <VideoWindow
             stream={remoteCameraStream}
+            audio={myAudioPermission}
             name={peer.user?.name || "abc"}
-            audio={peerAudioPermission}
             video={peerCameraPermission}
           />
 
