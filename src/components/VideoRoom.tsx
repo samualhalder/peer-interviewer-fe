@@ -438,12 +438,12 @@ export default function VideoRoom(props: propType) {
             video={peerCameraPermission}
           />
           {/* add this inside the main return so the element exists in DOM */}
-          <audio
+          {/* <audio
             id="remote-audio"
             autoPlay
             controls={false}
             style={{ display: "none" }}
-          />
+          /> */}
 
           <div className=" flex  gap-2">
             <Button
