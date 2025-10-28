@@ -47,6 +47,7 @@ export default function VideoRoom(props: propType) {
   console.log(recordedVideoUrl);
 
   // ----------------- negosiation-------------------
+  //      before this step there is one more step related to web rtc that is in StartInterview.tsx file
 
   // #0 : peer connection will notify when we start the negosiation
   useEffect(() => {
@@ -166,20 +167,64 @@ export default function VideoRoom(props: propType) {
       stream.getTracks().forEach((track) => {
         PeerService.peer!.addTrack(track, stream);
       });
+      // after you add tracks to PeerService.peer
+      try {
+        // PeerService.getOffer() creates an offer and sets local description inside your service
+        const offer = await PeerService.getOffer();
+        socket?.emit("nego-needed", { offer, room: props.roomId });
+        console.log(
+          "Triggered manual negotiation after addTrack, localDescription now has m=audio?",
+          !!(PeerService.peer?.localDescription?.sdp || "").includes(
+            "\nm=audio"
+          )
+        );
+      } catch (err) {
+        console.warn("Manual negotiation after addTrack failed:", err);
+      }
+
+      console.log(
+        "SENDERS:",
+        PeerService.peer
+          ?.getSenders()
+          .map((s) => ({ kind: s.track?.kind, id: s.track?.id }))
+      );
+      console.log(
+        "SENDER localDescription m=audio? ->",
+        !!(PeerService.peer?.localDescription?.sdp || "").includes("\nm=audio")
+      );
     }
-  }, [myStream, socket, props.roomId]);
+  }, [socket, props.roomId]);
 
   const sendAudio = useCallback(async () => {
     socket?.emit("audio-permission", { roomId: props.roomId });
     setMyAudioPermission((pre) => !pre);
     const stream = await fetchMyStream();
+    console.log(
+      "Local tracks:",
+      stream.getAudioTracks(),
+      stream.getVideoTracks()
+    );
 
     if (stream && PeerService.peer) {
       stream.getTracks().forEach((track) => {
         PeerService.peer!.addTrack(track, stream);
       });
+      // after you add tracks to PeerService.peer
+      try {
+        // PeerService.getOffer() creates an offer and sets local description inside your service
+        const offer = await PeerService.getOffer();
+        socket?.emit("nego-needed", { offer, room: props.roomId });
+        console.log(
+          "Triggered manual negotiation after addTrack, localDescription now has m=audio?",
+          !!(PeerService.peer?.localDescription?.sdp || "").includes(
+            "\nm=audio"
+          )
+        );
+      } catch (err) {
+        console.warn("Manual negotiation after addTrack failed:", err);
+      }
     }
-  }, [myStream, socket, props.roomId]);
+  }, [socket, props.roomId]);
 
   const handleOtherUserAcceptedCall = useCallback(
     async (data: { room: string; answer: RTCSessionDescription }) => {
@@ -189,15 +234,32 @@ export default function VideoRoom(props: propType) {
   );
 
   const handleTrack = async (ev: any) => {
-    const track = ev.track;
-
-    if (track.kind === "video") {
-      const stream = new MediaStream([track]);
-      if (screenTrackIds.current.has(track.id)) {
-        setRemoteScreenStream(stream);
+    console.log("track event:", ev);
+    // Prefer full MediaStream if provided (most browsers do this)
+    if (ev.streams && ev.streams[0]) {
+      const incoming = ev.streams[0] as MediaStream;
+      const videoTrack = incoming.getVideoTracks()[0];
+      // if the incoming stream's video track id is one of the screen IDs -> screen
+      if (videoTrack && screenTrackIds.current.has(videoTrack.id)) {
+        setRemoteScreenStream(incoming);
       } else {
-        setRemoteCameraStream(stream);
+        setRemoteCameraStream(incoming);
       }
+      console.log("Incoming stream audio tracks:", incoming.getAudioTracks());
+      return;
+    }
+
+    // Fallback: single track event
+    const track = ev.track;
+    if (!track) return;
+    if (screenTrackIds.current.has(track.id)) {
+      const s = remoteScreenStream || new MediaStream();
+      s.addTrack(track);
+      setRemoteScreenStream(s);
+    } else {
+      const s = remoteCameraStream || new MediaStream();
+      s.addTrack(track);
+      setRemoteCameraStream(s);
     }
   };
 
@@ -325,6 +387,25 @@ export default function VideoRoom(props: propType) {
     handleOtherUserAcceptedCall,
   ]);
 
+  // attach remoteCameraStream to an audio element and try to play it
+  useEffect(() => {
+    const audioEl = document.getElementById(
+      "remote-audio"
+    ) as HTMLAudioElement | null;
+    if (!audioEl) return;
+
+    if (remoteCameraStream) {
+      audioEl.srcObject = remoteCameraStream;
+      audioEl.muted = false;
+      // try to play (if blocked by autoplay policy this will be caught)
+      audioEl.play().catch((e) => {
+        console.warn("remote audio play() blocked:", e);
+      });
+    } else {
+      audioEl.srcObject = null;
+    }
+  }, [remoteCameraStream]);
+
   return (
     <div className="h-full w-full ">
       <Modal
@@ -355,6 +436,13 @@ export default function VideoRoom(props: propType) {
             audio={peerAudioPermission}
             name={peer.user?.name || "abc"}
             video={peerCameraPermission}
+          />
+          {/* add this inside the main return so the element exists in DOM */}
+          <audio
+            id="remote-audio"
+            autoPlay
+            controls={false}
+            style={{ display: "none" }}
           />
 
           <div className=" flex  gap-2">

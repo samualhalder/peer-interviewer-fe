@@ -31,8 +31,6 @@ export default function StartInterview() {
   }, [user, to]);
 
   const handleInterviewRequest = async (data: any) => {
-    console.log("got start req", data);
-
     const { room, offer } = data;
     if (room == currentRoom) {
       setRemoteDescription(offer);
