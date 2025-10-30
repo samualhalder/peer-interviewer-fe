@@ -12,12 +12,12 @@ export default function EndMetting({
   roomId,
   stopMyStream,
   showGaurd,
-  setShowGaurd
+  setShowGaurd,
 }: {
-    showGaurd:boolean,
-    roomId: string;
-    stopMyStream: () => void;
-    setShowGaurd:(b:boolean)=>void
+  showGaurd: boolean;
+  roomId: string;
+  stopMyStream: () => void;
+  setShowGaurd: (b: boolean) => void;
 }) {
   const [showEndMeetingModal, setShowEndMeetingModal] = useState(false);
   const [showListenEndMeetingModal, setShowListenEndMeetingModal] =
@@ -25,7 +25,7 @@ export default function EndMetting({
   const socket = useSocket();
   const router = useRouter();
   const handleOnAccept = async () => {
-    setShowGaurd(false)
+    setShowGaurd(false);
     await endInterviewService(roomId);
     socket?.emit("end-meeting", roomId);
     stopMyStream();
@@ -44,7 +44,7 @@ export default function EndMetting({
 
   return (
     <>
-    <RouteChangeGuard showGaurd={showGaurd}  />
+      <RouteChangeGuard showGaurd={showGaurd} />
       <Modal
         title="End Meeting ?"
         descripton="are you sure,you wan't to end this meeting"
@@ -57,7 +57,7 @@ export default function EndMetting({
         descripton="Other person have ended this meeting,So we are takeing you back"
         isOpen={showListenEndMeetingModal}
         onClose={() => {
-          setShowGaurd(false)
+          setShowGaurd(false);
           stopMyStream();
           router.back();
           router.back();

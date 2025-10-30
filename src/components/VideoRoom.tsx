@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import Chat from "./common/Chat";
 import EndMetting from "./common/EndMetting";
+
 interface propType {
   roomId: string;
   peerId: string;
@@ -32,7 +33,7 @@ export default function VideoRoom(props: propType) {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [showGaurd, setShowGaurd] = useState(true);
   const [myStream, setMyStream] = useState<MediaStream | null>(null);
-  const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null); // for screen share
+  //   const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null); // for screen share
   const [remoteCameraStream, setRemoteCameraStream] =
     useState<MediaStream | null>(null);
   const [remoteScreenStream, setRemoteScreenStream] =
@@ -44,7 +45,7 @@ export default function VideoRoom(props: propType) {
   const [myAudioPermission, setMyAudioPermission] = useState(false);
   const [peerAudioPermission, setPeerAudioPermission] = useState(false);
 
-  console.log(recordedVideoUrl);
+  //   console.log(recordedVideoUrl);
 
   // ----------------- negosiation-------------------
   //      before this step there is one more step related to web rtc that is in StartInterview.tsx file
@@ -120,9 +121,10 @@ export default function VideoRoom(props: propType) {
 
   const handleScreenSharing = useCallback((data: any) => {
     const recordedBlob = new Blob([data.videoBlob], { type: "video/webm" });
-    const videoUrl = URL.createObjectURL(recordedBlob);
+    console.log(recordedBlob);
 
-    setRecordedVideoUrl(videoUrl); // ✅ Update state instead of manipulating DOM directly
+    // const videoUrl = URL.createObjectURL(recordedBlob);
+    // setRecordedVideoUrl(videoUrl); // ✅ Update state instead of manipulating DOM directly
   }, []);
 
   const handlePeerCameraPermission = useCallback(() => {
@@ -267,20 +269,21 @@ export default function VideoRoom(props: propType) {
     socket?.emit("stoping-screen-sharing", { roomId: props.roomId });
     screenTrackIds.current.clear();
     setRemoteScreenStream(null);
+    const screenStream = screenRef;
+    const videoStream = screenVideoRef;
+    screenStream?.getTracks().forEach((element) => element.stop());
+    videoStream?.getTracks().forEach((element) => element.stop());
+    screenRef = null;
+    screenVideoRef = null;
     PeerService.peer?.getSenders().forEach((sender) => {
       if (sender.track === screenTrack) {
         sender.replaceTrack(null);
       }
     });
-
-    // Remove screen track but keep camera active
-    // setMyStream((prevStream) => {
-    //   const newStream = new MediaStream(
-    //     prevStream!.getTracks().filter((t) => t !== screenTrack)
-    //   );
-    //   return newStream;
-    // });
   };
+
+  let screenRef: MediaStream | null = null;
+  let screenVideoRef: MediaStream | null = null;
   const startScreenShare = async () => {
     try {
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
@@ -291,6 +294,8 @@ export default function VideoRoom(props: propType) {
         video: true,
       });
       const screenTrack = screenStream.getVideoTracks()[0];
+      screenRef = screenStream;
+      screenVideoRef = videoStream;
 
       socket?.emit("sharing-screen-tracks", {
         roomId: props.roomId,
@@ -388,23 +393,23 @@ export default function VideoRoom(props: propType) {
   ]);
 
   // attach remoteCameraStream to an audio element and try to play it
-  useEffect(() => {
-    const audioEl = document.getElementById(
-      "remote-audio"
-    ) as HTMLAudioElement | null;
-    if (!audioEl) return;
+  //   useEffect(() => {
+  //     const audioEl = document.getElementById(
+  //       "remote-audio"
+  //     ) as HTMLAudioElement | null;
+  //     if (!audioEl) return;
 
-    if (remoteCameraStream) {
-      audioEl.srcObject = remoteCameraStream;
-      audioEl.muted = false;
-      // try to play (if blocked by autoplay policy this will be caught)
-      audioEl.play().catch((e) => {
-        console.warn("remote audio play() blocked:", e);
-      });
-    } else {
-      audioEl.srcObject = null;
-    }
-  }, [remoteCameraStream]);
+  //     if (remoteCameraStream) {
+  //       audioEl.srcObject = remoteCameraStream;
+  //       audioEl.muted = false;
+  //       // try to play (if blocked by autoplay policy this will be caught)
+  //       audioEl.play().catch((e) => {
+  //         console.warn("remote audio play() blocked:", e);
+  //       });
+  //     } else {
+  //       audioEl.srcObject = null;
+  //     }
+  //   }, [remoteCameraStream]);
 
   return (
     <div className="h-full w-full ">
