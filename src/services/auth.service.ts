@@ -17,6 +17,7 @@ const signUpService = async (data: any) => {
     }
     const token = result.data.result;
     TokenUtils?.setToken(token);
+    httpService.setJWT(token);
     return { success: true };
   } catch (error: any) {
     toast({
@@ -40,6 +41,7 @@ const signInService = async (data: any) => {
     }
     const token = result.data.result as string;
     TokenUtils?.setToken(token);
+    httpService.setJWT(token);
     return { success: true };
   } catch (error: any) {
     toast({
@@ -63,6 +65,7 @@ const oAuhtService = async (data: any) => {
     }
     const token = result.data.result as string;
     TokenUtils?.setToken(token);
+    httpService.setJWT(token);
     return { success: true };
   } catch (error: any) {
     toast({
