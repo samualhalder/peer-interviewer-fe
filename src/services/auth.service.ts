@@ -15,6 +15,8 @@ const signUpService = async (data: any) => {
         description: result?.data?.message,
       });
     }
+    const token = result.data.result;
+    TokenUtils?.setToken(token);
     return { success: true };
   } catch (error: any) {
     toast({
