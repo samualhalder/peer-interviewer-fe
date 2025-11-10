@@ -52,8 +52,8 @@ export default function UserPageRight() {
   return (
     <>
       <Flex
-        gap="xl"
-        className="md:col-span-2 p-2 rounded-md md:h-full"
+        gap="sm"
+        className="md:col-span-2 p-2 rounded-md md:h-screen "
         items="center"
         justify="between"
       >
@@ -75,14 +75,15 @@ export default function UserPageRight() {
             data={{ name: "Canceled Interviews", value: intStats.canceled }}
           />
         </Flex>
-        <Flex items="start" className="">
+        <Flex
+          items="start"
+          className={` ${to?.skills?.length == 0 && "hidden"}`}
+        >
           <ShowSkills skills={to?.skills} />
-          <Break color="#025AE0" />
         </Flex>
+        <Break color="#025AE0" />
         {canChat ? (
-          <div className="max-h-[75%] min-h-[75%] w-full">
-            <Chat to={to as UserType} user={user as UserType} />
-          </div>
+          <Chat to={to as UserType} user={user as UserType} />
         ) : (
           <CantChat />
         )}

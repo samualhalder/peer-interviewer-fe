@@ -504,13 +504,13 @@ export default function VideoRoom(props: propType) {
             />
           )}
         </Flex>
-        <div
+        {/* <div
           className={`${
             isChatOpen ? "block" : " invisible"
-          } border-2 col-span-1 border-myprimary p-2 rounded-md h-[98vh]`}
+          } border-2 col-span-1 border-myprimary p-2 rounded-md h-full overflow-y-auto`}
         >
-          <Chat to={peer.user as UserType} user={user as UserType} />
-        </div>
+        </div> */}
+        <Chat to={peer.user as UserType} user={user as UserType} />
       </div>
     </div>
   );

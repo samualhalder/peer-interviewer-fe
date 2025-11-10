@@ -48,8 +48,8 @@ export default function Chat(props: propsType) {
   }, [to, chatDivRef.current]);
 
   return (
-    <div className="flex flex-col gap-5 justify-end max-h-full px-2 w-[100%] h-full">
-      <div className=" h-[98%] overflow-y-scroll " ref={chatDivRef}>
+    <div className="flex flex-col gap-5 justify-end px-2 w-[100%] overflow-y-auto items-center">
+      <div className=" overflow-y-scroll w-full" ref={chatDivRef}>
         {chats.map((chat, ind) => (
           <ChatText
             key={chat.id}
@@ -62,8 +62,7 @@ export default function Chat(props: propsType) {
           />
         ))}
       </div>
-
-      <ChatInput to={to} />
+      <ChatInput to={to as UserType} />
     </div>
   );
 }
