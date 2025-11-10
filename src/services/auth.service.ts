@@ -77,6 +77,7 @@ const oAuhtService = async (data: any) => {
 };
 const signOutService = () => {
   TokenUtils?.removeToken();
+  httpService.setJWT("");
   toast({
     variant: "success",
     description: "Sign out successgull",

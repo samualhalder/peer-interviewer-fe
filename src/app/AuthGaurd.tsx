@@ -15,10 +15,8 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const token = TokenUtils?.getToken() as string;
   const { user } = useFetchUser();
 
-
-  const publicPaths = ["/signin", "/signup"];
-
   useEffect(() => {
+    const publicPaths = ["/signin", "/signup", "/"];
     const fun = async () => {
       setIsCheckingAuth(true);
       const res = await checkValidToken(token);
@@ -31,14 +29,12 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
         router.push("/");
       }
       if (res && !publicPaths.includes(pathname)) {
-
-
         dispatch(setUser(user));
       }
       setIsCheckingAuth(false);
     };
     fun();
-  }, [token, user]);
+  }, [token, user, dispatch, router, pathname]);
 
   return isCheckingAuth ? null : children;
 };

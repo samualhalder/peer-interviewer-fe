@@ -77,8 +77,8 @@ function Bubblos() {
     <div className="absolute -z-10">
       <div
         style={{
-          width: "1400px",
-          height: "1300px",
+          width: "150vh",
+          height: "150vh",
           clipPath: "inset(230px 0px 0px 0px)", // trims 100px from the top
         }}
         className="rounded-full bg-myprimary shadow-[0_0_60px_rgba(0,0,0,0.2)] ring-8 ring-[#a2d2ff]/40 "
