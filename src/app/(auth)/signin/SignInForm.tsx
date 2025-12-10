@@ -39,6 +39,7 @@ export default function SignInForm() {
                 as="input"
                 label="Email*"
                 labelText="white"
+                placeholder="example@gamail.com"
               />
               <InputField
                 name="password"
@@ -48,6 +49,7 @@ export default function SignInForm() {
                 label="Password*"
                 type="password"
                 labelText="white"
+                placeholder="password"
               />
               <Button
                 className="w-full mt-5 border-white border-[1px]"

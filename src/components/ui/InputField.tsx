@@ -26,7 +26,7 @@ export default function InputField({
             {label}
           </label>
         )}
-        <Field name={name} as={as} className="custom-input " {...props} />
+        <Field name={name} as={as} className="custom-input " {...props}  />
 
         {errors[name] && touched[name] && (
           <div className=" text-sm text-red-400">{errors[name]}</div>
