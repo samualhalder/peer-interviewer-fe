@@ -40,7 +40,7 @@ export default function Button({
   ...props
 }: ButtonProps) {
   return (
-    <div className="w-full flex justify-center items-center relative group">
+    <div className=" flex justify-center items-center relative group">
       <button
         {...props}
         className={cn(buttonVariants({ variant, size }), className)}

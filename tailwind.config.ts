@@ -68,6 +68,19 @@ export default {
       zIndex: {
         max: "9999", // Custom z-index value
       },
+      keyframes: {
+        "smooth-bounce": {
+          "0%": { transform: "translateY(0)" },
+          "20%": { transform: "translateY(-20px)" },
+          "40%": { transform: "translateY(0)" },
+          "60%": { transform: "translateY(-10px)" },
+          "80%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(0)" }, // ends smoothly
+        },
+      },
+      animation: {
+        "bounce-twice": "smooth-bounce 1.5s ease-out 2",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
