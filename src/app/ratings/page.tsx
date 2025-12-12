@@ -26,7 +26,7 @@ export default function Page() {
 
   return (
     <TabContext.Provider value={{ currentTab: currentTab }}>
-      <Flex justify="start" items="center" className="w-full">
+      <Flex justify="start" items="center" className="w-full h-screen">
         <Tab
           tabs={tabs}
           currentValue={currentTab}

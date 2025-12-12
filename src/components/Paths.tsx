@@ -5,6 +5,7 @@ import Navbar from "./layouts/Navbar";
 import MainLayout from "./layouts/MainLayout";
 import { usePathname } from "next/navigation";
 import CatchIntRequest from "./CatchIntRequest";
+import Footer from "./Footer";
 
 export default function Paths({ children }: { children: React.ReactNode }) {
   const noNavbarPaths = ["/signup", "/signin", "/interview-room/*"];
@@ -23,6 +24,7 @@ export default function Paths({ children }: { children: React.ReactNode }) {
           <Navbar />
           <CatchIntRequest />
           <MainLayout>{children}</MainLayout>
+          <Footer />
           <Toaster />
         </>
       )}

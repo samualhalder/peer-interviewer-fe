@@ -17,7 +17,7 @@ export default async function Page({ params }: PropType) {
   const { search } = await params;
 
   return (
-    <div>
+    <div className="min-h-screen">
       <ShowUserCards search={search} />
     </div>
   );

@@ -23,7 +23,7 @@ export default function Page() {
     fetchNotification();
   }, []);
   return (
-    <div className="flex flex-col gap-4">
+    <div className="min-h-screen flex flex-col gap-4">
       {notifications?.map((notification) => (
         <NotificationCard notification={notification} key={notification.id} />
       ))}

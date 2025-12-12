@@ -1,5 +1,4 @@
 import About from "@/components/About";
-import Footer from "@/components/Footer";
 import HomeBg from "@/components/HomeBg";
 
 export const metadata = {
@@ -12,7 +11,6 @@ export default function Home() {
     <div className="w-full">
       <HomeBg />
       <About />
-      <Footer />
     </div>
   );
 }
