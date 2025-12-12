@@ -21,6 +21,7 @@ import { set } from "@/redux/requestsSlice";
 import { unseenNotificationsService } from "@/services/notification.service";
 import { add as addNotification, addByNumber } from "@/redux/notificationSlice";
 import { useSocket } from "@/context/SocketContext";
+import Image from "next/image";
 
 const montserratFont = Montserrat({
   subsets: ["latin"],
@@ -66,8 +67,14 @@ function Title() {
   return (
     <Link
       href={"/"}
-      className={` tracking-widest text-2xl ${montserratFont.className} select-none`}
+      className={`flex gap-2 items-center justify-center  tracking-widest text-2xl ${montserratFont.className} select-none`}
     >
+      <Image
+        src={"/images/pind-nobg-2.png"}
+        width={30}
+        height={30}
+        alt="logo"
+      ></Image>
       peerInterviewer
     </Link>
   );

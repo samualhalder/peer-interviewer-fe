@@ -62,7 +62,7 @@ export default function LeftProfileForm() {
             />
             <Button type="submit" disabled={isSubmitting}>
               {!isSubmitting ? (
-                "Sign In"
+                "Save"
               ) : (
                 <span className="flex items-center justify-around">
                   <Spinner />

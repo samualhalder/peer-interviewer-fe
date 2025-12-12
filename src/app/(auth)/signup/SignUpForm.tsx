@@ -65,7 +65,7 @@ export default function SignUpForm() {
                 disabled={isSubmitting}
               >
                 {!isSubmitting ? (
-                  "Sign In"
+                  "Sign Up"
                 ) : (
                   <span className="flex items-center justify-around">
                     <Spinner />
