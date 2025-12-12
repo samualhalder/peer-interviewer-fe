@@ -9,7 +9,7 @@ const sendChatService = async (data: any) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return { success: false };
   }
@@ -21,7 +21,7 @@ const listChatService = async (id: string) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return { success: false };
   }

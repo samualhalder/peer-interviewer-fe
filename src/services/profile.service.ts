@@ -19,7 +19,7 @@ const leftProfileFormService = async (data: any) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return data;
   }

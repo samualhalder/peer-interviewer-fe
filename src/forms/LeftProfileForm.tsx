@@ -6,6 +6,7 @@ import React from "react";
 import Flex from "@/components/ui/Flex";
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function LeftProfileForm() {
   const { user } = useFetchUser();
@@ -22,13 +23,12 @@ export default function LeftProfileForm() {
       }}
       validationSchema={leftProfileFormValidation}
       onSubmit={async (values, { setSubmitting }) => {
-
         setSubmitting(true);
         await leftProfileFormService(values);
         setSubmitting(false);
       }}
     >
-      {({ errors, touched }) => (
+      {({ errors, touched, isSubmitting }) => (
         <Form className="w-full">
           <Flex>
             <InputField
@@ -60,7 +60,15 @@ export default function LeftProfileForm() {
               errors={errors}
               touched={touched}
             />
-            <Button type="submit">Save</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {!isSubmitting ? (
+                "Sign In"
+              ) : (
+                <span className="flex items-center justify-around">
+                  <Spinner />
+                </span>
+              )}
+            </Button>
           </Flex>
         </Form>
       )}

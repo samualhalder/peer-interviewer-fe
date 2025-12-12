@@ -182,3 +182,5 @@ function Requests() {
     </Link>
   );
 }
+
+export { Title };

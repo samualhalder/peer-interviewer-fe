@@ -22,7 +22,7 @@ const signUpService = async (data: any) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return { success: false };
   }
@@ -46,7 +46,7 @@ const signInService = async (data: any) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return { success: false };
   }
@@ -70,7 +70,7 @@ const oAuhtService = async (data: any) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return { success: false };
   }
@@ -127,7 +127,7 @@ const resetpasswordService = async (data: any) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return false;
   }
@@ -142,7 +142,7 @@ const getUsersService = async (search: string) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return [];
   }

@@ -18,7 +18,7 @@ const giveRatingService = async (id: string, rate: number, review: string) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return { success: false };
   }
@@ -55,7 +55,7 @@ const updateRatingService = async (
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
   }
 };
@@ -68,7 +68,7 @@ const getRatingsGivenService = async () => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
   }
 };
@@ -81,7 +81,7 @@ const getRatingsRecivedService = async () => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
   }
 };

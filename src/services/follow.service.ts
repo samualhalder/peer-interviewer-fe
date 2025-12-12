@@ -19,7 +19,7 @@ const followService = async (data: any) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return data;
   }
@@ -41,7 +41,7 @@ const unFollowService = async (data: any) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return data;
   }
@@ -56,7 +56,7 @@ const isFollowingService = async (id: string) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return false;
   }

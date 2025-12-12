@@ -7,6 +7,7 @@ import { signUpService } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import InputField from "@/components/ui/InputField";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -22,8 +23,8 @@ export default function SignUpForm() {
           setSubmitting(true);
           const res = await signUpService(value);
           setSubmitting(false);
-          resetForm();
           if (res.success) {
+            resetForm();
             router.push("/");
           }
         }}
@@ -63,7 +64,13 @@ export default function SignUpForm() {
                 variant="secondary"
                 disabled={isSubmitting}
               >
-                Sign Up
+                {!isSubmitting ? (
+                  "Sign In"
+                ) : (
+                  <span className="flex items-center justify-around">
+                    <Spinner />
+                  </span>
+                )}
               </Button>
             </div>
           </Form>

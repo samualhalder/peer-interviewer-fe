@@ -7,6 +7,7 @@ import { signInService } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import InputField from "@/components/ui/InputField";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -21,9 +22,9 @@ export default function SignInForm() {
           setSubmitting(true);
           const res = await signInService(value);
           setSubmitting(false);
-          resetForm();
           if (res.success) {
             router.push("/");
+            resetForm();
           }
         }}
         validationSchema={signinValidationSchema}
@@ -56,7 +57,13 @@ export default function SignInForm() {
                 variant="secondary"
                 disabled={isSubmitting}
               >
-                Sign In
+                {!isSubmitting ? (
+                  "Sign In"
+                ) : (
+                  <span className="flex items-center justify-around">
+                    <Spinner />
+                  </span>
+                )}
               </Button>
             </div>
           </Form>

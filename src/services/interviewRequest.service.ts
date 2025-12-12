@@ -19,7 +19,7 @@ const sendService = async (data: any) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return data;
   }
@@ -33,7 +33,7 @@ const unsendService = async (data: any) => {
     if (!result?.data?.error) {
       toast({
         variant: "success",
-        description: result?.data?.message,
+        description: result?.data?.message || "Something Went Wrong",
       });
     }
 
@@ -41,7 +41,7 @@ const unsendService = async (data: any) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return data;
   }
@@ -57,7 +57,7 @@ const isSentService = async (id: string) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return false;
   }
@@ -101,7 +101,7 @@ const acceptService = async (id: string) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return false;
   }
@@ -119,7 +119,7 @@ const rejectService = async (id: string) => {
   } catch (error: any) {
     toast({
       variant: "destructive",
-      description: error?.response?.data?.message,
+      description: error?.response?.data?.message || "Something Went Wrong",
     });
     return false;
   }

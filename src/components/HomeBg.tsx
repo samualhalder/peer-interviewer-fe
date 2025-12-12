@@ -15,7 +15,7 @@ const montserratFont = Montserrat({
 
 function HomeBg() {
   return (
-    <div>
+    <div className="">
       <HomeBackGround>
         <HomeLeft />
         <HomeRight />
