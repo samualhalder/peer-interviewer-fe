@@ -6,13 +6,17 @@ import { UserType } from "@/types/entity.types";
 import { ResponseReturnType } from "@/types/service.types";
 import { Dispatch, SetStateAction, useState } from "react";
 
-export default function ImageUpload({
-  setUser,
-}: {
+type Props = {
+  isOpen: boolean;
+  onClose: () => void;
   setUser: Dispatch<SetStateAction<UserType | null>>;
-}) {
+};
+
+export default function ImageUploadModal({ isOpen, onClose, setUser }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+
+  if (!isOpen) return null;
 
   const handleUpload = async () => {
     if (!file) return;
@@ -29,14 +33,13 @@ export default function ImageUpload({
       );
 
       await leftProfileFormService({ image: res.data.result.url });
-      setUser((prev) => {
-        if (!prev) return prev; // or return null
 
-        return {
-          ...prev,
-          image: res.data.result.url,
-        };
+      setUser((prev) => {
+        if (!prev) return prev;
+        return { ...prev, image: res.data.result.url };
       });
+
+      onClose(); // close modal on success
     } catch (err) {
       console.error("Upload failed", err);
     } finally {
@@ -45,20 +48,35 @@ export default function ImageUpload({
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => setFile(e.target.files?.[0] || null)}
-      />
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
-      <button
-        onClick={handleUpload}
-        disabled={loading}
-        className="px-4 py-2 bg-blue-600 text-white rounded"
-      >
-        {loading ? "Uploading..." : "Upload"}
-      </button>
+      {/* Modal */}
+      <div className="relative bg-white rounded-xl p-6 w-full max-w-md shadow-lg">
+        <h2 className="text-lg font-semibold mb-4">Upload Profile Image</h2>
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setFile(e.target.files?.[0] || null)}
+          className="mb-4"
+        />
+
+        <div className="flex justify-end gap-3">
+          <button onClick={onClose} className="px-4 py-2 rounded border">
+            Cancel
+          </button>
+
+          <button
+            onClick={handleUpload}
+            disabled={loading}
+            className="px-4 py-2 bg-blue-600 text-white rounded"
+          >
+            {loading ? "Uploading..." : "Upload"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
