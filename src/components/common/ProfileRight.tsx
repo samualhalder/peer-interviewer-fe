@@ -30,7 +30,7 @@ export default function ProfileRight() {
           data={{ name: "Total Interviews Taken", value: intStats.intTaken }}
         />
         <ProfileCard
-          color={{ from: "#FEBE10", to: "#FFD700" }}
+          color={{ to: "#FFEF76", from: "#FFD700" }}
           data={{ name: "Upcoming Interviews", value: intStats.upcommings }}
         />
         <ProfileCard

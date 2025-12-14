@@ -18,14 +18,14 @@ export default function ImageCircle({
           width: `${width}px`,
           height: `${height}px`,
         }}
-        className="rounded-full overflow-hidden border-mysecondary border-2 flex items-center justify-center"
+        className=" relative rounded-full overflow-hidden border-mysecondary border-2 flex items-center justify-center"
       >
         {link ? (
           <Image
             src={`${link}?timestamp=${new Date().getTime()}`}
             alt="image"
-            width={width}
-            height={height}
+            fill
+            className=" object-cover"
           />
         ) : (
           <FaUserCircle size={width} color="" />

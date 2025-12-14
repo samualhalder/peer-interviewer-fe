@@ -5,7 +5,7 @@ import ImageCircle from "./common/ImageCircle";
 
 import { UserContext } from "./layouts/UserPageLayout";
 import Button from "./ui/Button";
-import { GoOrganization, GoLocation} from "react-icons/go";
+import { GoOrganization, GoLocation } from "react-icons/go";
 import { IoSendSharp, IoHeartDislike, IoHeart } from "react-icons/io5";
 import { MdCancel, MdCancelScheduleSend } from "react-icons/md";
 import {
@@ -39,7 +39,7 @@ export default function UserPageLeft() {
   }, [to?.id]);
 
   return (
-    <div className="md:col-span-1 rounded-md md:h-[100%] bg-gradient-to-br from-myprimary  to-mysecondary">
+    <div className="md:col-span-1 rounded-md md:h-[100%] bg-mysecondary">
       <Flex gap="sm" className="py-5 px-2">
         <ImageCircle width={280} height={280} link={to?.image} />
         <Flex items="start" className="p-5" gap="md">

@@ -14,5 +14,5 @@ export default function useFetchUser() {
     };
     fetchUserFuntion();
   }, []);
-  return { user, loading };
+  return { user, loading, setuser };
 }
