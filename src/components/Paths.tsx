@@ -8,7 +8,12 @@ import CatchIntRequest from "./CatchIntRequest";
 import Footer from "./Footer";
 
 export default function Paths({ children }: { children: React.ReactNode }) {
-  const noNavbarPaths = ["/signup", "/signin", "/interview-room/*"];
+  const noNavbarPaths = [
+    "/signup",
+    "/signin",
+    "/interview-room/*",
+    "/forgot-password",
+  ];
   const pathname = usePathname();
   return (
     <>

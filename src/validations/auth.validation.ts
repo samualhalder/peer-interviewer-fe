@@ -24,3 +24,7 @@ export const resetPasswordValidatiaonSchema = Yup.object().shape({
       "Confirm password must match to new password field"
     ),
 });
+
+export const forgotPasswordValidationSchema = Yup.object().shape({
+  email: Yup.string().email().required("Email is required"),
+});

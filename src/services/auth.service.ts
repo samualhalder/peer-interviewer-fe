@@ -172,6 +172,30 @@ const isPasswordSetService = async () => {
   }
 };
 
+const forgotPassword = async (data: { email: string }) => {
+  try {
+    const result = await httpService.post<ResponseReturnType>(
+      "/auth/forgot-password",
+      data
+    );
+    if (!result?.data?.error) {
+      toast({
+        variant: "success",
+        description: result?.data?.message,
+      });
+    }
+    const token = result.data.result as string;
+    TokenUtils?.setToken(token);
+    return true;
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      description: error?.response?.data?.message || "Something Went Wrong",
+    });
+    return false;
+  }
+};
+
 export {
   signUpService,
   signInService,
@@ -183,4 +207,5 @@ export {
   getUsersService,
   getUsersByIdService,
   isPasswordSetService,
+  forgotPassword,
 };

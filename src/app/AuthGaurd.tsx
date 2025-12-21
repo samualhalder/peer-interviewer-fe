@@ -16,7 +16,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const { user } = useFetchUser();
 
   useEffect(() => {
-    const publicPaths = ["/signin", "/signup", "/"];
+    const publicPaths = ["/signin", "/signup", "/", "/forgot-password"];
     const fun = async () => {
       setIsCheckingAuth(true);
       const res = await checkValidToken(token);

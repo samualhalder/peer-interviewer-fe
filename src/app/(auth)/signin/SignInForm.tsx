@@ -52,6 +52,9 @@ export default function SignInForm() {
                 labelText="white"
                 placeholder="password"
               />
+              <Link href={"/forgot-password"} className="text-white italic">
+                forgot password?
+              </Link>
               <Button
                 className="w-full mt-5 border-white border-[1px]"
                 variant="secondary"
