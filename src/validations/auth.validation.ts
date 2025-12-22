@@ -28,3 +28,14 @@ export const resetPasswordValidatiaonSchema = Yup.object().shape({
 export const forgotPasswordValidationSchema = Yup.object().shape({
   email: Yup.string().email().required("Email is required"),
 });
+
+export const resetForgotPasswordValidationSchema = Yup.object().shape({
+  token: Yup.string().required("Retry after some time"),
+  password: Yup.string().required("password is required"),
+  confirmPassword: Yup.string()
+    .required("confirm password is required")
+    .oneOf(
+      [Yup.ref("password")],
+      "Confirm password dont match with new password"
+    ),
+});

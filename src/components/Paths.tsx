@@ -13,6 +13,7 @@ export default function Paths({ children }: { children: React.ReactNode }) {
     "/signin",
     "/interview-room/*",
     "/forgot-password",
+    "/reset-password",
   ];
   const pathname = usePathname();
   return (

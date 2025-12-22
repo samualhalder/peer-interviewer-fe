@@ -196,6 +196,44 @@ const forgotPassword = async (data: { email: string }) => {
   }
 };
 
+const validateResetPasswordTokenService = async (token: string) => {
+  try {
+    await httpService.get<ResponseReturnType>(
+      `/auth/validate-token?token=${token}`
+    );
+
+    return true;
+  } catch (error: any) {
+    console.log(error);
+    return false;
+  }
+};
+
+const resetForgotPasswordService = async (data: {
+  token: string;
+  password: string;
+}) => {
+  try {
+    const result = await httpService.post<ResponseReturnType>(
+      "/auth/reset-forgot-password",
+      data
+    );
+    if (!result?.data?.error) {
+      toast({
+        variant: "success",
+        description: result?.data?.message,
+      });
+    }
+    return true;
+  } catch (error: any) {
+    toast({
+      variant: "destructive",
+      description: error?.response?.data?.message || "Something Went Wrong",
+    });
+    return false;
+  }
+};
+
 export {
   signUpService,
   signInService,
@@ -208,4 +246,6 @@ export {
   getUsersByIdService,
   isPasswordSetService,
   forgotPassword,
+  validateResetPasswordTokenService,
+  resetForgotPasswordService,
 };
