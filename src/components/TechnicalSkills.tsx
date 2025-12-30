@@ -5,10 +5,11 @@ import { IoAddCircleSharp } from "react-icons/io5";
 import { techStacks } from "../lib/techStacks";
 import Button from "./ui/Button";
 import { leftProfileFormService } from "@/services/profile.service";
-import useFetchUser from "@/hooks/useFetchUser";
 import HeadingTitle from "./common/HeadingTitle";
 import useOutSideClick from "@/hooks/useOutSideClick";
 import Pill from "./Pills";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 export default function TechnicalSkills() {
   return (
@@ -23,7 +24,7 @@ export default function TechnicalSkills() {
 }
 
 const Input = () => {
-  const { user } = useFetchUser();
+  const { user } = useSelector((state: RootState) => state.user);
   const [serchTerm, setSerchTerm] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);

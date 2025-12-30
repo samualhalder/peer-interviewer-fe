@@ -1,13 +1,14 @@
 "use client";
-import useFetchUser from "@/hooks/useFetchUser";
 import React, { useState } from "react";
 import ImageCircle from "./ImageCircle";
 import Flex from "../ui/Flex";
 import LeftProfileForm from "@/forms/LeftProfileForm";
 import ImageUpload from "./ImageUpload";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 
 export default function ProfileLeft() {
-  const { user, setuser } = useFetchUser();
+  const user = useSelector((state: RootState) => state.user.user);
   const [showImgModal, setShowImgModal] = useState(false);
   return (
     <div className="md:col-span-1 rounded-md md:h-screen bg-mysecondary">
@@ -29,7 +30,6 @@ export default function ProfileLeft() {
           </div>
         </div>
         <ImageUpload
-          setUser={setuser}
           isOpen={showImgModal}
           onClose={() => setShowImgModal(false)}
         />

@@ -1,20 +1,21 @@
 "use client";
 
+import { setUserField } from "@/redux/userSlice";
 import httpService from "@/services/http.service";
 import { leftProfileFormService } from "@/services/profile.service";
-import { UserType } from "@/types/entity.types";
 import { ResponseReturnType } from "@/types/service.types";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  setUser: Dispatch<SetStateAction<UserType | null>>;
 };
 
-export default function ImageUploadModal({ isOpen, onClose, setUser }: Props) {
+export default function ImageUploadModal({ isOpen, onClose }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   if (!isOpen) return null;
 
@@ -33,12 +34,7 @@ export default function ImageUploadModal({ isOpen, onClose, setUser }: Props) {
       );
 
       await leftProfileFormService({ image: res.data.result.url });
-
-      setUser((prev) => {
-        if (!prev) return prev;
-        return { ...prev, image: res.data.result.url };
-      });
-
+      dispatch(setUserField({ image: res.data.result.url }));
       onClose(); // close modal on success
     } catch (err) {
       console.error("Upload failed", err);

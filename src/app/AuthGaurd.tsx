@@ -2,10 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import TokenUtils from "@/utils/token.utils";
-import { checkValidToken } from "../services/auth.service";
-import useFetchUser from "@/hooks/useFetchUser";
-import { setUser, removeUser } from "@/redux/userSlice";
+
+import { removeUser } from "@/redux/userSlice";
 import { useDispatch } from "react-redux";
+import { isTokenExpired } from "@/lib/utils";
+import tokenUtils from "@/utils/token.utils";
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -13,9 +14,9 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
   const token = TokenUtils?.getToken() as string;
-  const { user } = useFetchUser();
 
   useEffect(() => {
+    console.log("loaded auth gaurd");
     const publicPaths = [
       "/signin",
       "/signup",
@@ -25,22 +26,31 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     ];
     const fun = async () => {
       setIsCheckingAuth(true);
-      const res = await checkValidToken(token);
-
-      if (!res && !publicPaths.includes(pathname)) {
+      if (isTokenExpired(token)) {
+        tokenUtils?.removeToken();
         dispatch(removeUser());
-        router.push("/signin");
+        TokenUtils?.removeToken();
+        if (!publicPaths.includes(pathname)) router.push("/signin");
+      } else {
+        // dispatch(setUser(user));
       }
-      if (res && publicPaths.includes(pathname)) {
-        router.push("/");
-      }
-      if (res && !publicPaths.includes(pathname)) {
-        dispatch(setUser(user));
-      }
+      // const res = await checkValidToken(token);
+
+      // if (!res && !publicPaths.includes(pathname)) {
+      //   dispatch(removeUser());
+      //   TokenUtils?.removeToken();
+      //   router.push("/signin");
+      // }
+      // if (res && publicPaths.includes(pathname)) {
+      //   router.push("/");
+      // }
+      // if (res && !publicPaths.includes(pathname)) {
+      //   dispatch(setUser(user));
+      // }
       setIsCheckingAuth(false);
     };
     fun();
-  }, [token, user, dispatch, router, pathname]);
+  }, [token, dispatch, router, pathname]);
 
   return isCheckingAuth ? null : children;
 };

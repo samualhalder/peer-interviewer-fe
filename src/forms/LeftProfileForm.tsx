@@ -1,4 +1,3 @@
-import useFetchUser from "@/hooks/useFetchUser";
 import { leftProfileFormValidation } from "@/validations/profile.validation";
 import { Form, Formik } from "formik";
 import { leftProfileFormService } from "../services/profile.service";
@@ -7,9 +6,11 @@ import Flex from "@/components/ui/Flex";
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/spinner";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 
 export default function LeftProfileForm() {
-  const { user } = useFetchUser();
+  const { user } = useSelector((state: RootState) => state.user);
 
   return (
     <Formik

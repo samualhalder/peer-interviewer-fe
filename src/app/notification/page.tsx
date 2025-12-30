@@ -14,7 +14,7 @@ import { useDispatch } from "react-redux";
 export default function Page() {
   const dispatch = useDispatch();
   const notifications = useSelector(
-    (state: RootState) => state.notifications.notifications
+    (state: RootState) => state?.notifications?.notifications
   );
   const [loading, setLoading] = useState(false);
   useEffect(() => {

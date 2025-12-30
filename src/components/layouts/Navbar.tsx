@@ -6,7 +6,6 @@ import { FaUserFriends } from "react-icons/fa";
 import Button from "../ui/Button";
 
 import Link from "next/link";
-import { toast } from "@/hooks/use-toast";
 import TokenUtils from "@/utils/token.utils";
 import DropDown from "../common/DropDown";
 
@@ -22,6 +21,7 @@ import { unseenNotificationsService } from "@/services/notification.service";
 import { add as addNotification, addByNumber } from "@/redux/notificationSlice";
 import { useSocket } from "@/context/SocketContext";
 import Image from "next/image";
+import { setUser } from "@/redux/userSlice";
 
 const montserratFont = Montserrat({
   subsets: ["latin"],
@@ -44,17 +44,7 @@ export default function Navbar() {
           ) : (
             <Link href={"/signin"}>
               {" "}
-              <Button
-                variant="outline"
-                onClick={() => {
-                  toast({
-                    variant: "success",
-                    description: "Friday, February 10, 2023 at 5:57 PM",
-                  });
-                }}
-              >
-                Sign In
-              </Button>{" "}
+              <Button variant="outline">Sign In</Button>{" "}
             </Link>
           )}
         </div>
@@ -83,6 +73,8 @@ function Title() {
 function Avatar() {
   const [isVissible, setIsVissible] = useState<boolean>(false);
   const { user } = useFetchUser();
+  const dispatch = useDispatch();
+  dispatch(setUser(user));
 
   return (
     <div
@@ -97,12 +89,12 @@ function Avatar() {
 }
 
 function NotificationIcon() {
-  const count = useSelector((state: RootState) => state.notifications.count);
+  const count = useSelector((state: RootState) => state?.notifications?.count);
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchUnseenNotifications = async () => {
       const res = await unseenNotificationsService();
-      dispatch(addByNumber(res.count));
+      dispatch(addByNumber(res?.count));
     };
     fetchUnseenNotifications();
   }, [dispatch]);

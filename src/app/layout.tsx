@@ -3,6 +3,8 @@ import "./globals.css";
 import AuthGuard from "./AuthGaurd";
 import Providers from "./providers";
 import Paths from "@/components/Paths";
+import tokenUtils from "@/utils/token.utils";
+import { isTokenExpired } from "@/lib/utils";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,6 +26,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const token = tokenUtils?.getToken() as string;
+  if (isTokenExpired(token)) {
+    tokenUtils?.removeToken();
+  }
   return (
     <html lang="en">
       <body

@@ -13,6 +13,8 @@ import { useRouter } from "next/navigation";
 import Break from "./Break";
 import useOutSideClick from "@/hooks/useOutSideClick";
 import { MdRateReview } from "react-icons/md";
+import { useDispatch } from "react-redux";
+import { removeUser } from "@/redux/userSlice";
 
 function DropDown({
   isVissible = false,
@@ -22,6 +24,7 @@ function DropDown({
   setIsVissible: Dispatch<SetStateAction<boolean>>;
 }) {
   const router = useRouter();
+  const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement | null>(null);
   useOutSideClick(ref, () => setIsVissible(false), isVissible);
   if (!isVissible) return null;
@@ -49,10 +52,11 @@ function DropDown({
           title="Sign Out"
           action={() => {
             signOutService();
+            dispatch(removeUser());
             router.push("/signin");
           }}
         />
-      </DropDownLayout>
+    </DropDownLayout>
     </div>
   );
 }
