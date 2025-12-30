@@ -21,7 +21,9 @@ export default function Page() {
     const fetchNotification = async () => {
       setLoading(true);
       const res = await listNotificationService();
-      dispatch(set({ count: res.count, notifications: res.notifications }));
+      if (res?.success) {
+        dispatch(set({ count: res.count, notifications: res.notifications }));
+      }
       setLoading(false);
     };
     fetchNotification();

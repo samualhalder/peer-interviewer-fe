@@ -30,7 +30,10 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
         tokenUtils?.removeToken();
         dispatch(removeUser());
         TokenUtils?.removeToken();
-        if (!publicPaths.includes(pathname)) router.push("/signin");
+        if (!publicPaths.includes(pathname)) {
+          router.push("/signin");
+          return;
+        }
       } else {
         // dispatch(setUser(user));
       }
